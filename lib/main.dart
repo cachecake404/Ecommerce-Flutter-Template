@@ -11,12 +11,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "Hookah Express",
       theme: ThemeData(
+  
+        backgroundColor: Colors.deepPurple,
         buttonColor: Color(0xff551a8b),
         accentColor: Color(0xffc0c0c0), 
+      
       ),
-      //home: Login(),
-      home: Prelogin(),
+      home: Login(),
+      //home: Prelogin(),
       //home: Shop()
     );
   }
