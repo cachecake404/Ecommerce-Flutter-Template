@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import "Pages/shop.dart";
 import "Pages/prelogin.dart";
+import "Pages/signup.dart";
 import "Pages/login.dart";
+
 
 
 void main() => runApp(MyApp());
@@ -19,7 +21,8 @@ class MyApp extends StatelessWidget {
         accentColor: Color(0xffc0c0c0), 
       
       ),
-      home: Login(),
+      home: SignUp(),
+      //home: Login(),
       //home: Prelogin(),
       //home: Shop()
     );
