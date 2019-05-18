@@ -9,11 +9,13 @@ class Prelogin extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
 
     //the two buttons at the bottom of the screen
-    _bottomButtons(String buttonText) => ButtonTheme(
+    _bottomButtons(String buttonText, String path) => ButtonTheme(
           minWidth: width * 0.49,
           height: height * 0.10,
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, path);
+            },
             color: Colors.deepPurple,
             child: new Text(
               '$buttonText',
@@ -54,9 +56,9 @@ class Prelogin extends StatelessWidget {
               _topDivider(),
               Row(
                 children: <Widget>[
-                  _bottomButtons("Sign In"),
+                  _bottomButtons("Sign In", "/login"),
                   _verticalDivider(),
-                  _bottomButtons("Sign Up"),
+                  _bottomButtons("Sign Up", "/signup"),
                 ],
               )
             ])

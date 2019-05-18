@@ -28,6 +28,16 @@ class _LoginState extends State<Login> {
     //       title: Text("$title"),
     //     );
 
+     _hookahLogoAppBar(String title) => AppBar(
+          backgroundColor: Theme.of(context).buttonColor,
+          // leading: Image.asset(
+          //   imageLink,
+          //   alignment: Alignment.centerLeft,
+          // ),
+          title: Text("$title"),
+        );
+
+
     //a styled general text field
     _inputTextField(String hintText, bool _obsecureText,
             TextEditingController output) =>
@@ -56,9 +66,11 @@ class _LoginState extends State<Login> {
     //the styled login button
     _loginButton() => ButtonTheme(
           minWidth: width * 0.49,
-          height: height * 0.10,
+          height: height * 0.08,
           child: RaisedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, "/shop");
+              },
               color: Theme.of(context).accentColor,
               child: new Text(
                 'Login',
@@ -75,7 +87,7 @@ class _LoginState extends State<Login> {
     _insideLoginBox() => Column(
           children: <Widget>[
             Container(
-                padding: EdgeInsets.all(15.0),
+                padding: EdgeInsets.all(12.0),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
@@ -104,20 +116,25 @@ class _LoginState extends State<Login> {
         );
 
     return Scaffold(
-      //appBar:
-       //   _hookahLogoAppBar("Hookah Express", "lib/Assets/hookah_express.png"),
+      appBar:
+        _hookahLogoAppBar("Hookah Express"),
       body: Container(
+        alignment: Alignment.topCenter,
         color: Color(0xFF580182),
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Image.asset("lib/Assets/hookah_express_old.png",height: height* 0.35,),
+              Image.asset(
+                "lib/Assets/hookah_express_old.png",
+                height: height * 0.30,
+              ),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
                       width: width * 0.90,
-                      height: height * 0.40,
+                      height: height * 0.38,
                       child: DecoratedBox(
                         child: _insideLoginBox(),
                         decoration: _loginBoxDecoration(),
