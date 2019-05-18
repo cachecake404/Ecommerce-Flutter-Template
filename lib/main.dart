@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import "Pages/shop.dart";
-import "Pages/prelogin.dart";
 import "Pages/login.dart";
-
+// import "Pages/prelogin.dart";
+// import "Pages/shop.dart";
 
 void main() => runApp(MyApp());
 
