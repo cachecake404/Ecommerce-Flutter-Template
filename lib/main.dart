@@ -24,10 +24,6 @@ class MyApp extends StatelessWidget {
         buttonColor: Color(0xff551a8b),
         accentColor: Color(0xffc0c0c0),
       ),
-      //home: SignUp(),
-      //home: Login(),
-      //home: Prelogin(),
-      //home: Shop()
     );
   }
 }
