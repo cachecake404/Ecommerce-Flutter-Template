@@ -10,9 +10,18 @@ class Shop extends StatefulWidget {
 class ShopState extends State<Shop> {
   // This widget is the root of your application.
 
+
+  //Colors
+  static const Color bottomBar = Colors.deepPurple;
+  Color drawerTextColor = Colors.white;
+  Color drawerColor = Colors.deepPurple;
+  Color appBarColor = Colors.deepPurple;
+  Color backgroundColor = Colors.grey;
+  Color selectedBottomItemColor = Colors.greenAccent;
+
 //Variables for Bottom Bar
   int _selectedIndex = 0;
-  static const MaterialColor bottomBarColor = Colors.deepPurple;
+  static const MaterialColor bottomBarColor = bottomBar;
 // Function for Bottom Bar
   void _onItemTapped(int index) {
     setState(() {
@@ -36,11 +45,11 @@ class ShopState extends State<Shop> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
-                    color: Colors.white,
+                    color: drawerTextColor,
                   ),
                 ),
               ]),
-              color: Colors.deepPurple,
+              color: drawerColor,
             ),
             Card(
               child: ListTile(
@@ -53,7 +62,7 @@ class ShopState extends State<Shop> {
         ),
       ),
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: appBarColor,
         title: Text("Hookah Express"),
         actions: <Widget>[
           IconButton(
@@ -63,9 +72,9 @@ class ShopState extends State<Shop> {
         ],
       ),
       body: Container(
-        decoration: new BoxDecoration(color: Colors.grey),
+        decoration: new BoxDecoration(color: backgroundColor),
         child: new Center(
-          child: new Text("HOOKAH EXPRESS"),
+          child: new Text("ITEMS TO BE ADDED HERE"),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -89,7 +98,7 @@ class ShopState extends State<Shop> {
               backgroundColor: bottomBarColor),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.greenAccent,
+        selectedItemColor: selectedBottomItemColor,
         onTap: _onItemTapped,
       ),
     );

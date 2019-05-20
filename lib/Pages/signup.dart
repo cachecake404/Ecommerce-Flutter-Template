@@ -21,9 +21,17 @@ class _SignUpState extends State<SignUp> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
+    //Colors
+    Color appBarColor = Theme.of(context).buttonColor;
+    Color hintStyleColor = Theme.of(context).accentColor;
+    Color buttonsColor = Theme.of(context).accentColor;
+    Color buttonTextColor = Theme.of(context).backgroundColor;
+    Color signupBoxBgColor = Color(0xFF510177);
+    Color backgroundColor = Color(0xFF580182);
+    
     //the top bar of the screen containing the logo and the title
     _hookahLogoAppBar(String title) => AppBar(
-          backgroundColor: Theme.of(context).buttonColor,
+          backgroundColor: appBarColor,
           // leading: Image.asset(
           //   imageLink,
           //   alignment: Alignment.centerLeft,
@@ -49,7 +57,7 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
             hintStyle: TextStyle(
-              color: Theme.of(context).accentColor,
+              color: hintStyleColor,
             ),
             border: OutlineInputBorder(),
           ),
@@ -64,11 +72,11 @@ class _SignUpState extends State<SignUp> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/shop');
               },
-              color: Theme.of(context).accentColor,
+              color: buttonsColor,
               child: new Text(
                 'Sign Up',
                 style: TextStyle(
-                  color: Theme.of(context).backgroundColor,
+                  color: buttonTextColor,
                   fontSize: 30,
                 ),
               ),
@@ -111,26 +119,30 @@ class _SignUpState extends State<SignUp> {
           borderRadius: BorderRadius.all(
             Radius.circular(40.0),
           ),
-          color: Colors.deepPurple,
+          color: signupBoxBgColor,
         );
 
     return Scaffold(
-      appBar:
-          _hookahLogoAppBar("Hookah Express"),
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              SizedBox(
-                width: width * 0.90,
-                height: height * 0.78,
-                child: DecoratedBox(
-                  child: _insideSignUpBox(),
-                  decoration: _singUpBoxDecoration(),
-                ),
-              ),
-            ])
-          ]),
+      appBar: _hookahLogoAppBar("Hookah Express"),
+      body: Container(
+        decoration: new BoxDecoration(color: backgroundColor),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      width: width * 0.90,
+                      height: height * 0.78,
+                      child: DecoratedBox(
+                        child: _insideSignUpBox(),
+                        decoration: _singUpBoxDecoration(),
+                      ),
+                    ),
+                  ])
+            ]),
+      ),
     );
   }
 }

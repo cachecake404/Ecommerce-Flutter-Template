@@ -10,6 +10,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    //Colors
+    Color themeBackgroundColor = Colors.deepPurple;
+    Color themeButtonColor = Color(0xff551a8b);
+    Color themeAccentColor = Color(0xffc0c0c0);
+
     return MaterialApp(
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
@@ -20,14 +26,10 @@ class MyApp extends StatelessWidget {
       },
       title: "Hookah Express",
       theme: ThemeData(
-        backgroundColor: Colors.deepPurple,
-        buttonColor: Color(0xff551a8b),
-        accentColor: Color(0xffc0c0c0),
+        backgroundColor: themeBackgroundColor,
+        buttonColor: themeButtonColor,
+        accentColor: themeAccentColor,
       ),
-      //home: SignUp(),
-      //home: Login(),
-      //home: Prelogin(),
-      //home: Shop()
     );
   }
 }

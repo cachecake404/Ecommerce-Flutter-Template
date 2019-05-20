@@ -8,6 +8,13 @@ class Prelogin extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
+
+    //Colors
+    Color buttonColors = Theme.of(context).accentColor;
+    Color lineBetweenButtons = Theme.of(context).accentColor;
+    Color bgColor = Theme.of(context).buttonColor;
+    Color bottomButtonsColor = Colors.deepPurple;
+
     //the two buttons at the bottom of the screen
     _bottomButtons(String buttonText, String path) => ButtonTheme(
           minWidth: width * 0.49,
@@ -16,11 +23,11 @@ class Prelogin extends StatelessWidget {
             onPressed: () {
               Navigator.pushNamed(context, path);
             },
-            color: Colors.deepPurple,
+            color: bottomButtonsColor,
             child: new Text(
               '$buttonText',
               style: TextStyle(
-                color: Theme.of(context).accentColor,
+                color: buttonColors,
                 fontSize: 30,
               ),
             ),
@@ -31,18 +38,18 @@ class Prelogin extends StatelessWidget {
     _topDivider() => Container(
           height: width * 0.004,
           width: width,
-          color: Theme.of(context).accentColor,
+          color: lineBetweenButtons,
         );
 
     //the line between the two buttons
     _verticalDivider() => Container(
           height: height * 0.10,
           width: width * 0.009,
-          color: Theme.of(context).accentColor,
+          color: lineBetweenButtons,
         );
 
     return Scaffold(
-        backgroundColor: Theme.of(context).buttonColor,
+        backgroundColor: bgColor,
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

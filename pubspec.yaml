@@ -45,6 +45,8 @@ flutter:
     - lib/Assets/hookah_express.png
     - lib/Assets/hookah_express_old.png
     - lib/Assets/icon.ico
+    - lib/Assets/facebook_icon.png
+    - lib/Assets/google_icon.png
   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

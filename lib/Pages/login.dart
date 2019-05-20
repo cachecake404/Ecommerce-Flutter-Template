@@ -18,6 +18,14 @@ class _LoginState extends State<Login> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
+    // Colors
+    Color appBarColor = Theme.of(context).buttonColor;
+    Color inputTextFieldColor = Theme.of(context).accentColor;
+    Color hintStyleColor = Theme.of(context).accentColor;
+    Color loginButtonColor = Theme.of(context).accentColor;
+    Color loginButtonTextStyleColor = Theme.of(context).backgroundColor;
+    Color loginBoxStyleColor = Color(0xFF510177);
+    Color backgroundColor = Color(0xFF580182);
     // //the top bar of the screen containing the logo and the title
     // _hookahLogoAppBar(String title, String imageLink) => AppBar(
     //       backgroundColor: Theme.of(context).buttonColor,
@@ -28,15 +36,14 @@ class _LoginState extends State<Login> {
     //       title: Text("$title"),
     //     );
 
-     _hookahLogoAppBar(String title) => AppBar(
-          backgroundColor: Theme.of(context).buttonColor,
+    _hookahLogoAppBar(String title) => AppBar(
+          backgroundColor: appBarColor,
           // leading: Image.asset(
           //   imageLink,
           //   alignment: Alignment.centerLeft,
           // ),
           title: Text("$title"),
         );
-
 
     //a styled general text field
     _inputTextField(String hintText, bool _obsecureText,
@@ -48,7 +55,7 @@ class _LoginState extends State<Login> {
             hintText: "$hintText",
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                color: Theme.of(context).accentColor,
+                color: inputTextFieldColor,
                 width: 2.5,
               ),
               borderRadius: BorderRadius.all(
@@ -56,7 +63,7 @@ class _LoginState extends State<Login> {
               ),
             ),
             hintStyle: TextStyle(
-              color: Theme.of(context).accentColor,
+              color: hintStyleColor,
             ),
             border: OutlineInputBorder(),
           ),
@@ -65,22 +72,22 @@ class _LoginState extends State<Login> {
 
     //the styled login button
     _loginButton() => ButtonTheme(
-          minWidth: width * 0.49,
+          minWidth: width * 0.39,
           height: height * 0.08,
           child: RaisedButton(
               onPressed: () {
-                Navigator.pushNamed(context, "/shop");
+                Navigator.pushReplacementNamed(context, "/shop");
               },
-              color: Theme.of(context).accentColor,
+              color: loginButtonColor,
               child: new Text(
                 'Login',
                 style: TextStyle(
-                  color: Theme.of(context).backgroundColor,
+                  color: loginButtonTextStyleColor,
                   fontSize: 30,
                 ),
               ),
               shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(40.0))),
+                  borderRadius: new BorderRadius.circular(30.0))),
         );
 
     //setup of the login box
@@ -100,6 +107,18 @@ class _LoginState extends State<Login> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
+                          Spacer(),
+                          IconButton(
+                            icon: Image.asset("lib/Assets/facebook_icon.png"),
+                            onPressed: () {},
+                          ),
+                          Spacer(),
+                          IconButton(
+                            icon: Image.asset("lib/Assets/google_icon.png"),
+                            onPressed: () {},
+                          ),
+                          Spacer(),
+                          Spacer(),
                           _loginButton(),
                         ],
                       )
@@ -112,36 +131,37 @@ class _LoginState extends State<Login> {
           borderRadius: BorderRadius.all(
             Radius.circular(40.0),
           ),
-          color: Color(0xFF510177),
+          color: loginBoxStyleColor,
         );
 
     return Scaffold(
-      appBar:
-        _hookahLogoAppBar("Hookah Express"),
+      appBar: _hookahLogoAppBar("Hookah Express"),
       body: Container(
         alignment: Alignment.topCenter,
-        color: Color(0xFF580182),
+        color: backgroundColor,
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                "lib/Assets/hookah_express_old.png",
-                height: height * 0.30,
-              ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: width * 0.90,
-                      height: height * 0.38,
-                      child: DecoratedBox(
-                        child: _insideLoginBox(),
-                        decoration: _loginBoxDecoration(),
-                      ),
-                    ),
-                  ])
-            ]),
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              "lib/Assets/hookah_express_old.png",
+              height: height * 0.30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: width * 0.90,
+                  height: height * 0.38,
+                  child: DecoratedBox(
+                    child: _insideLoginBox(),
+                    decoration: _loginBoxDecoration(),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
