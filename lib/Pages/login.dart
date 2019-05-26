@@ -139,9 +139,7 @@ class _LoginState extends State<Login> {
       body: Container(
         alignment: Alignment.topCenter,
         color: backgroundColor,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: ListView(
           children: <Widget>[
             Image.asset(
               "lib/Assets/hookah_express_old.png",
