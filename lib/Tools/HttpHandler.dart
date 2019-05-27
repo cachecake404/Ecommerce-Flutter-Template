@@ -6,19 +6,19 @@ class HttpHandler {
   HttpHandler(String link) {
     url = link;
   }
-  Future<String> addData(Map<String, dynamic> dataToBeSend) async {
+  Future<Map<String, dynamic>> addData(Map<String, dynamic> dataToBeSend) async {
     http.Response response = await http.post(
-        "https://studyfirebase-5b760.firebaseio.com/people.json",
-        body: json.encode(dataToBeSend));
+        url,
+        body: json.encode(dataToBeSend),headers: {"Content-Type":"application/json"});
 
     Map<String, dynamic> responseData = json.decode(response.body);
-    String key = responseData["name"];
-    return key;
+    return responseData;
+  
   }
 
   Future<Map<String, dynamic>> getData(String key) async {
     final http.Response response = await http
-        .get("https://studyfirebase-5b760.firebaseio.com/people.json");
+        .get(url);
 
     Map<String, dynamic> responseData = json.decode(response.body);
 
