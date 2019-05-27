@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../Pages/ordercard.dart';
 
 class Prelogin extends StatelessWidget {
   @override
@@ -7,7 +8,6 @@ class Prelogin extends StatelessWidget {
     //used to get height and width of current screen
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-
 
     //Colors
     Color buttonColors = Theme.of(context).accentColor;
@@ -53,22 +53,29 @@ class Prelogin extends StatelessWidget {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Image.asset(
-              "lib/Assets/hookah_express.png",
-              alignment: Alignment.center,
-              height: height * 0.77,
-              width: width * 0.9,
+            Ordercard(
+              resturantName: "hookah express",
+              resturantLocation: "Arlington, TX",
+              orderDeliveredTime: "05/05/2019 - 12:00 AM",
+              delivered: true,
+              totalCost: 21.36,
             ),
-            Column(children: <Widget>[
-              _topDivider(),
-              Row(
-                children: <Widget>[
-                  _bottomButtons("Sign In", "/login"),
-                  _verticalDivider(),
-                  _bottomButtons("Sign Up", "/signup"),
-                ],
-              )
-            ])
+            // Image.asset(
+            //   "lib/Assets/hookah_express.png",
+            //   alignment: Alignment.center,
+            //   height: height * 0.77,
+            //   width: width * 0.9,
+            // ),
+            // Column(children: <Widget>[
+            //   _topDivider(),
+            //   Row(
+            //     children: <Widget>[
+            //       _bottomButtons("Sign In", "/login"),
+            //       _verticalDivider(),
+            //       _bottomButtons("Sign Up", "/signup"),
+            //     ],
+            //   )
+            // ])
           ],
         ));
   }

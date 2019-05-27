@@ -48,8 +48,8 @@ flutter:
     - lib/Assets/icon.ico
     - lib/Assets/facebook_icon.png
     - lib/Assets/google_icon.png
-    - lib/Assets/order_delivered.png
-    - lib/Assets/order_not_delivered.png
+    - lib/Assets/order_deliverd.png
+    - lib/Assets/order_not_deliverd.png
     
   
   # An image asset can refer to one or more resolution-specific "variants", see
