@@ -126,9 +126,9 @@ class _SignUpState extends State<SignUp> {
       appBar: _hookahLogoAppBar("Hookah Express"),
       body: Container(
         decoration: new BoxDecoration(color: backgroundColor),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        child: ListView(
             children: <Widget>[
+              Image.asset("lib/Assets/icon.ico",height: height*0.1),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
