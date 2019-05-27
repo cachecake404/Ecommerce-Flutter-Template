@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
     Color themeBackgroundColor = Colors.deepPurple;
     Color themeButtonColor = Color(0xff551a8b);
     Color themeAccentColor = Color(0xffc0c0c0);
+    // Color themePrimaryColorLight = Color(0xffB/A55D3);
 
     return MaterialApp(
       initialRoute: '/',
