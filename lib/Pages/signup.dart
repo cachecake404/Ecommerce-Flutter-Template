@@ -9,9 +9,9 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   GlobalKey<FormState> _key = new GlobalKey();
+  TextEditingController pEdit = new TextEditingController();
   bool _validate = false;
   String _name, _email, _phoneNumber, _username, _password, _confirmPassword;
-
   @override
   Widget build(BuildContext context) {
     //used to get height and width of current screen
@@ -94,6 +94,7 @@ class _SignUpState extends State<SignUp> {
               }),
           new SizedBox(height: height * 0.01),
           new TextFormField(
+              controller: pEdit,
               decoration: _formFieldsDecoration('password'),
               obscureText: true,
               validator: validatePassword,
@@ -207,15 +208,18 @@ class _SignUpState extends State<SignUp> {
     if (value.length == 0) {
       return "Password is Required";
     }
+
     return null;
   }
 
   String validateConfirmPassword(String value) {
-    // print("current password $_password");
+    String pass = pEdit.text;
     if (value.length == 0) {
       return "Confirm Password is Required";
-      // } else if (value != _password) {
-      //   return "Does not match with Password";
+    }
+
+    if (value.toString() != pass.toString()) {
+      return "Passwords do not match";
     }
     return null;
   }
