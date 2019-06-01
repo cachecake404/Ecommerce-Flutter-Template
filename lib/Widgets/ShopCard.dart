@@ -20,28 +20,34 @@ class ShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    //double height = MediaQuery.of(context).size.height;
+
     return Card(
       color: cardBackground,
       child: Column(
         children: <Widget>[
-          Image.network(imageUrl),
-          Row(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text(name),
-                  Text(r"$" + price.toString()),
-                ],
-              ),
-              Spacer(),
-              Text(shortDescription),
-              Spacer(),
-              RaisedButton(
-                child: Text("View"),
-                onPressed: () {},
-              ),
-            ],
+          Image.network(
+            imageUrl,          
+            width: width * 0.5,
           ),
+          //   Row(
+          //     children: <Widget>[
+          //       Column(
+          //         children: <Widget>[
+          //           Text(name),
+          //           Text(r"$" + price.toString()),
+          //         ],
+          //       ),
+          //       Spacer(),
+          //       Text(shortDescription),
+          //       Spacer(),
+          //       RaisedButton(
+          //         child: Text("View"),
+          //         onPressed: () {},
+          //       ),
+          //     ],
+          //   ),
         ],
       ),
     );
