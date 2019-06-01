@@ -8,17 +8,12 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  
-    
+  GlobalKey<FormState> _key = new GlobalKey();
+  bool _validate = false;
+  String _name, _email, _phoneNumber, _username, _password, _confirmPassword;
+
   @override
   Widget build(BuildContext context) {
-    //the text input handlers
-    final textControllerUsername = TextEditingController();
-    final textControllerPassword = TextEditingController();
-    final textControllerEmail = TextEditingController();
-    final textControllerName = TextEditingController();
-    final textControllerPhone = TextEditingController();
-
     //used to get height and width of current screen
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -30,50 +25,95 @@ class _SignUpState extends State<SignUp> {
     Color buttonTextColor = Theme.of(context).backgroundColor;
     Color signupBoxBgColor = Color(0xFF510177);
     Color backgroundColor = Color(0xFF580182);
-    
-    //the top bar of the screen containing the logo and the title
+
+    // UI COMPONENTS
+
     _hookahLogoAppBar(String title) => AppBar(
           backgroundColor: appBarColor,
-          // leading: Image.asset(
-          //   imageLink,
-          //   alignment: Alignment.centerLeft,
-          // ),
           title: Text("$title"),
         );
 
-    //a styled general text field
-    _inputTextField(String hintText, bool _obsecureText,
-            TextEditingController output) =>
-        TextField(
-          controller: output,
-          decoration: InputDecoration(
-            //fillColor: Theme.of(context).accentColor,
-            hintText: "$hintText",
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Theme.of(context).accentColor,
-                width: 2.5,
-              ),
-              borderRadius: BorderRadius.all(
-                Radius.circular(40.0),
-              ),
-            ),
-            hintStyle: TextStyle(
-              color: hintStyleColor,
-            ),
-            border: OutlineInputBorder(),
+    _singUpBoxDecoration() => BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(40.0),
           ),
-          obscureText: _obsecureText,
+          color: signupBoxBgColor,
         );
 
-    //the styled login button
-    _singUpButton() => ButtonTheme(
-          minWidth: width * 0.49,
-          height: height * 0.10,
-          child: RaisedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/shop');
-              },
+    _formFieldsDecoration(String hintText) => new InputDecoration(
+          fillColor: Theme.of(context).accentColor,
+          hintText: "$hintText",
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).accentColor,
+              width: 2.5,
+            ),
+            borderRadius: BorderRadius.all(
+              Radius.circular(40.0),
+            ),
+          ),
+          hintStyle: TextStyle(
+            color: hintStyleColor,
+          ),
+          border: OutlineInputBorder(),
+        );
+
+    _signUpBox() {
+      return new Column(
+        children: <Widget>[
+          new TextFormField(
+            // decoration: new InputDecoration(hintText: 'Name'),
+            decoration: _formFieldsDecoration("name"),
+            validator: validateName,
+            onSaved: (String val) {
+              _name = val;
+            },
+          ),
+          new SizedBox(height: height * 0.01),
+          new TextFormField(
+              decoration: _formFieldsDecoration('email'),
+              keyboardType: TextInputType.emailAddress,
+              validator: validateEmail,
+              onSaved: (String val) {
+                _email = val;
+              }),
+          new SizedBox(height: height * 0.01),
+          new TextFormField(
+              decoration: _formFieldsDecoration('phone'),
+              keyboardType: TextInputType.phone,
+              validator: validatePhone,
+              onSaved: (String val) {
+                _phoneNumber = val;
+              }),
+          new SizedBox(height: height * 0.01),
+          new TextFormField(
+              decoration: _formFieldsDecoration('username'),
+              validator: validateUsername,
+              onSaved: (String val) {
+                _username = val;
+              }),
+          new SizedBox(height: height * 0.01),
+          new TextFormField(
+              decoration: _formFieldsDecoration('password'),
+              obscureText: true,
+              validator: validatePassword,
+              onSaved: (String val) {
+                _password = val;
+              }),
+          new SizedBox(height: height * 0.01),
+          new TextFormField(
+              decoration: _formFieldsDecoration('confirm password'),
+              obscureText: true,
+              validator: validateConfirmPassword,
+              onSaved: (String val) {
+                _confirmPassword = val;
+              }),
+          new SizedBox(height: height * 0.01),
+          new ButtonTheme(
+            minWidth: width * 0.49,
+            height: height * 0.10,
+            child: new RaisedButton(
+              onPressed: _onSignUpClick,
               color: buttonsColor,
               child: new Text(
                 'Sign Up',
@@ -83,68 +123,119 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(40.0))),
-        );
-
-    //setup of the login box
-    _insideSignUpBox() => Column(
-          children: <Widget>[
-            Container(
-                padding: EdgeInsets.all(15.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      SizedBox(height: height * 0.03),
-                      _inputTextField("name", false, textControllerName),
-                      SizedBox(height: height * 0.03),
-                      _inputTextField("email", false, textControllerEmail),
-                      SizedBox(height: height * 0.03),
-                      _inputTextField("phone", false, textControllerPhone),
-                      SizedBox(height: height * 0.03),
-                      _inputTextField(
-                          "username", false, textControllerUsername),
-                      SizedBox(height: height * 0.03),
-                      _inputTextField("password", true, textControllerPassword),
-                      SizedBox(height: height * 0.03),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          _singUpButton(),
-                        ],
-                      )
-                    ]))
-          ],
-        );
-
-    //stlying of the login box
-    _singUpBoxDecoration() => BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(40.0),
+                  borderRadius: new BorderRadius.circular(40.0)),
+            ),
           ),
-          color: signupBoxBgColor,
-        );
+        ],
+      );
+    }
 
-    return Scaffold(
-      appBar: _hookahLogoAppBar("Hookah Express"),
-      body: Container(
-        decoration: new BoxDecoration(color: backgroundColor),
-        child: ListView(
+    return MaterialApp(
+      home: new Scaffold(
+        appBar: _hookahLogoAppBar("Hookah Express"),
+        body: Container(
+          color: backgroundColor,
+          child: new ListView(
             children: <Widget>[
-              Image.asset("lib/Assets/icon.ico",height: height*0.1),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: width * 0.90,
-                      height: height * 0.78,
-                      child: DecoratedBox(
-                        child: _insideSignUpBox(),
-                        decoration: _singUpBoxDecoration(),
-                      ),
-                    ),
-                  ])
-            ]),
+              Image.asset("lib/Assets/icon.ico", height: height * 0.1),
+              new SingleChildScrollView(
+                child: new Container(
+                  decoration: _singUpBoxDecoration(),
+                  padding: EdgeInsets.all(15.0),
+                  margin: new EdgeInsets.all(15.0),
+                  child: new Form(
+                    key: _key,
+                    autovalidate: _validate,
+                    child: _signUpBox(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  //VALIDATION CHECKS
+
+  String validateName(String value) {
+    String patttern = r'(^[a-zA-Z\s]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Name is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Name must be a-z and A-Z";
+    }
+    return null;
+  }
+
+  String validatePhone(String value) {
+    String patttern = r'(^[0-9]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Mobile is Required";
+    } else if (value.length != 10) {
+      return "Mobile number must 10 digits";
+    } else if (!regExp.hasMatch(value)) {
+      return "Mobile Number must be digits";
+    }
+    return null;
+  }
+
+  String validateEmail(String value) {
+    String pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = new RegExp(pattern);
+    if (value.length == 0) {
+      return "Email is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Invalid Email";
+    } else {
+      return null;
+    }
+  }
+
+  String validateUsername(String value) {
+    if (value.length == 0) {
+      return "Username is Required";
+    }
+    return null;
+  }
+
+  String validatePassword(String value) {
+    if (value.length == 0) {
+      return "Password is Required";
+    }
+    return null;
+  }
+
+  String validateConfirmPassword(String value) {
+    // print("current password $_password");
+    if (value.length == 0) {
+      return "Confirm Password is Required";
+      // } else if (value != _password) {
+      //   return "Does not match with Password";
+    }
+    return null;
+  }
+
+  _onSignUpClick() {
+    if (_key.currentState.validate()) {
+      // No any error in validation
+      _key.currentState.save();
+      print("Name $_name");
+      print("Email $_email");
+      print("Mobile $_phoneNumber");
+      print("username $_username");
+      print("password $_password");
+      print("confirm password $_confirmPassword");
+      Navigator.pushReplacementNamed(context, '/shop');
+    } else {
+      // validation error
+      setState(() {
+        _validate = true;
+      });
+    }
   }
 }
