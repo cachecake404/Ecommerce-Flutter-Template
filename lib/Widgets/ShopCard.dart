@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ShopCard extends StatelessWidget {
+  
   //Colors
   final Color cardBackground = Colors.white;
 
@@ -28,26 +29,34 @@ class ShopCard extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Image.network(
-            imageUrl,          
-            width: width * 0.5,
+            imageUrl,
+            width: width * 0.4955,
           ),
-          //   Row(
-          //     children: <Widget>[
-          //       Column(
-          //         children: <Widget>[
-          //           Text(name),
-          //           Text(r"$" + price.toString()),
-          //         ],
-          //       ),
-          //       Spacer(),
-          //       Text(shortDescription),
-          //       Spacer(),
-          //       RaisedButton(
-          //         child: Text("View"),
-          //         onPressed: () {},
-          //       ),
-          //     ],
-          //   ),
+          // Row(
+          //   children: <Widget>[
+          //     Column(
+          //       children: <Widget>[Text(name), Text(price.toString())],
+          //     )
+          //   ],
+          // ),
+          // Text(shortDescription),
+          Row(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Text(name),
+                  Text(r"$"+price.toString()),
+                ],
+              ),
+              Text("  "),
+              Text(shortDescription),
+              Text("  "),
+              RaisedButton(
+                child: Text("View"),
+                onPressed: () {},
+              ),
+            ],
+          ),
         ],
       ),
     );

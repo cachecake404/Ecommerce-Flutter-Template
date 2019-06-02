@@ -275,9 +275,16 @@ class _SignUpState extends State<SignUp> {
     if (value.length == 0) {
       return "Confirm Password is Required";
     }
-
+    
     if (value.toString() != pass.toString()) {
       return "Passwords do not match";
+    }
+
+    int dur = DateTime.now().difference(timeNow).inDays; // 6570 is 18 years old
+    
+    if(dur < 6570)
+    {
+      return "You need to be 18 years old to sign up!";
     }
     return null;
   }
