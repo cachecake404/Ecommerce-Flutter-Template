@@ -3,12 +3,14 @@ import 'package:http/http.dart' as http;
 
 class HttpHandler {
   String url = "";
-  HttpHandler(String link) {
+  String endpoint ="";
+  HttpHandler(String link,String endp) {
     url = link;
+    endpoint = endp;
   }
   Future<Map<String, dynamic>> addData(Map<String, dynamic> dataToBeSend) async {
     http.Response response = await http.post(
-        url,
+        url+endpoint+".json",
         body: json.encode(dataToBeSend),headers: {"Content-Type":"application/json"});
 
     Map<String, dynamic> responseData = json.decode(response.body);
@@ -16,9 +18,9 @@ class HttpHandler {
   
   }
 
-  Future<Map<String, dynamic>> getData(String key) async {
+  Future<Map<String, dynamic>> getData() async {
     final http.Response response = await http
-        .get(url);
+        .get(url+endpoint+".json");
 
     Map<String, dynamic> responseData = json.decode(response.body);
 
