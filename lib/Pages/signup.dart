@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class SignUp extends StatefulWidget {
   State<StatefulWidget> createState() {
@@ -11,9 +12,37 @@ class _SignUpState extends State<SignUp> {
   GlobalKey<FormState> _key = new GlobalKey();
   TextEditingController pEdit = new TextEditingController();
   bool _validate = false;
-  String _name, _email, _phoneNumber, _username, _password, _confirmPassword;
+  String _fname,
+      _lname,
+      _email,
+      _phoneNumber,
+      _address,
+      _username,
+      _password,
+      _confirmPassword;
+  DateTime timeNow = DateTime.now();
+  
+
+  Future<String> selectedDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: timeNow,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2050),
+    );
+    if (picked != null && picked != timeNow) {
+      setState(() {
+        timeNow = picked;
+      });
+    }
+    return "HI";
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    String formattedDate = DateFormat('MM-dd-yyyy').format(timeNow); // String form of time;
+
     //used to get height and width of current screen
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -25,6 +54,7 @@ class _SignUpState extends State<SignUp> {
     Color buttonTextColor = Theme.of(context).backgroundColor;
     Color signupBoxBgColor = Color(0xFF510177);
     Color backgroundColor = Color(0xFF580182);
+    Color dobTextColor = Colors.white;
 
     // UI COMPONENTS
 
@@ -63,13 +93,22 @@ class _SignUpState extends State<SignUp> {
         children: <Widget>[
           new TextFormField(
             // decoration: new InputDecoration(hintText: 'Name'),
-            decoration: _formFieldsDecoration("name"),
+            decoration: _formFieldsDecoration("First Name"),
             validator: validateName,
             onSaved: (String val) {
-              _name = val;
+              _fname = val;
             },
           ),
           new SizedBox(height: height * 0.01),
+          new TextFormField(
+            // decoration: new InputDecoration(hintText: 'Name'),
+            decoration: _formFieldsDecoration("Last Name"),
+            validator: validateName,
+            onSaved: (String val) {
+              _lname = val;
+            },
+          ),
+          new SizedBox(height: height * 0.03),
           new TextFormField(
               decoration: _formFieldsDecoration('email'),
               keyboardType: TextInputType.emailAddress,
@@ -86,6 +125,25 @@ class _SignUpState extends State<SignUp> {
                 _phoneNumber = val;
               }),
           new SizedBox(height: height * 0.01),
+          new TextFormField(
+              decoration: _formFieldsDecoration('Address'),
+              validator: validateUsername,
+              onSaved: (String val) {
+                _address = val;
+              }),
+          new SizedBox(height: height * 0.03),
+          new Row(
+            children: <Widget>[
+              Text("  Date of Birth: ",style: TextStyle(color: dobTextColor,fontWeight: FontWeight.w800),),
+              Text(formattedDate ,style: TextStyle(color: dobTextColor,fontWeight: FontWeight.w500),),
+              Spacer(),
+              RaisedButton(
+                onPressed: () {selectedDate(context);},
+                child: Text("Select"),
+              )
+            ],
+          ),
+          new SizedBox(height: height * 0.03),
           new TextFormField(
               decoration: _formFieldsDecoration('username'),
               validator: validateUsername,
@@ -228,9 +286,12 @@ class _SignUpState extends State<SignUp> {
     if (_key.currentState.validate()) {
       // No any error in validation
       _key.currentState.save();
-      print("Name $_name");
+      print("First Name $_fname");
+      print("Last Name $_lname");
       print("Email $_email");
       print("Mobile $_phoneNumber");
+      print("Address $_address");
+      print("Day is "+timeNow.day.toString()+" Month is "+timeNow.month.toString()+" Year is "+timeNow.year.toString());
       print("username $_username");
       print("password $_password");
       print("confirm password $_confirmPassword");
