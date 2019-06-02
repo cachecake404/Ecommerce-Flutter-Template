@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class ShopCard extends StatelessWidget {
   
   //Colors
-  final Color cardBackground = Colors.white;
+  final Color cardBackground = Colors.deepPurple;
+  final Color viewButtonColor = Colors.purpleAccent;
 
   //final String id; // Include this in constructor later.
   final String name;
@@ -21,16 +22,23 @@ class ShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    //double width = MediaQuery.of(context).size.width;
     //double height = MediaQuery.of(context).size.height;
 
     return Card(
       color: cardBackground,
       child: Column(
+        
         children: <Widget>[
-          Image.network(
-            imageUrl,
-            width: width * 0.4955,
+        
+          Container(
+            height: 180,
+            width: 300,
+            
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.fill,
+            ),
           ),
           // Row(
           //   children: <Widget>[
@@ -40,18 +48,22 @@ class ShopCard extends StatelessWidget {
           //   ],
           // ),
           // Text(shortDescription),
-          Row(
+          Row(mainAxisAlignment: MainAxisAlignment.end,
+            //crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
+              
               Column(
                 children: <Widget>[
-                  Text(name),
-                  Text(r"$"+price.toString()),
+                  Text(name,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800),),
+                  
+                  Text(r"$"+price.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800),),
                 ],
               ),
               Text("  "),
-              Text(shortDescription),
-              Text("  "),
+              Text(shortDescription,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400),),
+              Text("      "),
               RaisedButton(
+                color: viewButtonColor,
                 child: Text("View"),
                 onPressed: () {},
               ),

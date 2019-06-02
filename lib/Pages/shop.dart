@@ -20,7 +20,7 @@ class ShopState extends State<Shop> {
   Color drawerTextColor = Colors.white;
   Color drawerColor = Colors.deepPurple;
   Color appBarColor = Colors.deepPurple;
-  Color backgroundColorScaffold = Colors.grey;
+  Color backgroundColorScaffold = Colors.white;
   Color selectedBottomItemColor = Colors.greenAccent;
 
 //Variables for Bottom Bar

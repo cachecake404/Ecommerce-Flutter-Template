@@ -10,11 +10,17 @@ class ShopCardHolder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color titleColor = Colors.deepPurple;
+
     return Container(
       child: Column(
-        
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(title),
+          Text(
+            " " + title,
+            style: TextStyle(
+                fontWeight: FontWeight.w900, fontSize: 22, color: titleColor),
+          ),
           SizedBox(
             height: 260,
             width: 400,
