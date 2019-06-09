@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import "../Tools/Auth.dart";
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUp extends StatefulWidget {
   State<StatefulWidget> createState() {
@@ -20,10 +22,21 @@ class _SignUpState extends State<SignUp> {
       _username,
       _password,
       _confirmPassword;
+  FirebaseUser user;
+   
   DateTime timeNow = DateTime.now();
   
+  void setUser() async
+  {
+    Auth authHandler = new Auth();
+    FirebaseUser us = await authHandler.signUp(_email, _password);
+    setState(() {
+     user = us; 
+    });
+    print(us.providerData);
+  }
 
-  Future<String> selectedDate(BuildContext context) async {
+  Future<void> selectedDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: timeNow,
@@ -35,8 +48,9 @@ class _SignUpState extends State<SignUp> {
         timeNow = picked;
       });
     }
-    return "HI";
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -302,6 +316,8 @@ class _SignUpState extends State<SignUp> {
       print("username $_username");
       print("password $_password");
       print("confirm password $_confirmPassword");
+      //setUser();
+     
       Navigator.pushReplacementNamed(context, '/shop');
     } else {
       // validation error

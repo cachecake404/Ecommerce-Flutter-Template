@@ -9,54 +9,32 @@ class ShopSub extends StatefulWidget {
 }
 
 class _ShopSubState extends State<ShopSub> {
-
   List<List<ShopCard>> typeFilter = new List<List<ShopCard>>();
   bool initialUpdate = false;
-  List<ShopCard> sampleGen(int n) {
-    ShopCard sample = ShopCard(
-        "",
-        "",
-        "",
-        "",
-        0);
-    ShopCard sample2 = ShopCard(
-        "Zen Wen",
-        "Blah Blah Blah\nBlah Blah Blah\nBlah Blah Blah",
-        "Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah!",
-        "http://inspirationfeed.com/wp-content/uploads/2010/06/1024x1024_Dizorb_UU_Theory_HD_Wallpaper-500x500.jpg",
-        12);
-    List<ShopCard> sampleData = new List<ShopCard>();
-    for (int i = 0; i < n; i++) {
-      sampleData.add(sample);
-      sampleData.add(sample2);
-    }
-    if (sampleData == null) {
-      print("NULL");
-    }
-    return sampleData;
-  }
 
-
-  
-  Future<void> postObject (String endpoint) async 
-  {
+  Future<void> postObject(String endpoint) async {
     ShopCard sample = ShopCard(
         "Tripy Wirpy",
         "Blah Blah Blah\nBlah Blah Blah\nBlah Blah Blah",
         "Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah!",
         "http://digitalimagemakerworld.com/images/crazy-pic/37943628-crazy-pic.jpg",
         19);
-        HttpHandler hand = new HttpHandler("https://studyfirebase-5b760.firebaseio.com/",endpoint);
-        Map<String,dynamic> response = await hand.addData({"name":sample.name,"shortDescrip":sample.shortDescription,"longDescrip":sample.longDescription,"price":sample.price,"image":sample.imageUrl});
-        print(response);
+    HttpHandler hand = new HttpHandler(
+        "https://studyfirebase-5b760.firebaseio.com/", endpoint);
+    Map<String, dynamic> response = await hand.addData({
+      "name": sample.name,
+      "shortDescrip": sample.shortDescription,
+      "longDescrip": sample.longDescription,
+      "price": sample.price,
+      "image": sample.imageUrl
+    });
+    print(response);
   }
 
-
-
-  Future<List<ShopCard>> getObjects(String endPoint,int endPointN) async {
+  Future<List<ShopCard>> getObjects(String endPoint, int endPointN) async {
     List<ShopCard> sampleData = new List<ShopCard>();
-    HttpHandler hand =
-        new HttpHandler("https://studyfirebase-5b760.firebaseio.com/", endPoint);
+    HttpHandler hand = new HttpHandler(
+        "https://studyfirebase-5b760.firebaseio.com/", endPoint);
     Map<String, dynamic> response = await hand.getData();
     List<Map<String, dynamic>> bodyList = new List<Map<String, dynamic>>();
     response.forEach((key, body) => (bodyList.add(body)));
@@ -66,31 +44,28 @@ class _ShopSubState extends State<ShopSub> {
       sampleData.add(sample);
     }
     setState(() {
-       typeFilter[endPointN-1] = sampleData;
-       print("DONE UPDATING LIST");
-     });
-    
+      typeFilter[endPointN - 1] = sampleData;
+      print("DONE UPDATING LIST");
+    });
+
     return sampleData;
   }
 
   @override
   Widget build(BuildContext context) {
-    
     //Post Objects here uncomment to post
     //postObject("Type3");
 
     // Add Filters here by calling getobjects after posting them
-    if(initialUpdate==false)
-    {
+    if (initialUpdate == false) {
       int n = 3; // Number of filters you want
-      for(int i = 0; i < n; i++ )
-      {
+      for (int i = 0; i < n; i++) {
         typeFilter.add(new List<ShopCard>());
-        getObjects("Type"+(i+1).toString(),i+1);
+        getObjects("Type" + (i + 1).toString(), i + 1);
       }
       initialUpdate = true;
     }
-    
+
     return Container(
       child: ListView(
         shrinkWrap: true,

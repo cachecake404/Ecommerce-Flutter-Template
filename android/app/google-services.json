@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "855149152131",
+    "firebase_url": "https://studyfirebase-5b760.firebaseio.com",
+    "project_id": "studyfirebase-5b760",
+    "storage_bucket": "studyfirebase-5b760.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855149152131:android:78ae68f621ec9f66",
+        "android_client_info": {
+          "package_name": "com.hookexpress"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "855149152131-mrihgfdeja8qhf172bd49o17fkf2mgs6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hookexpress",
+            "certificate_hash": "ad1be77cc60e34b96cbad953c716ab56b97a5ede"
+          }
+        },
+        {
+          "client_id": "855149152131-1tr3kr26o4c3uqum05la25qu25scebhn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5HPBd1px-jPtrCppgZhxawPXZEMEqzEc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "855149152131-1tr3kr26o4c3uqum05la25qu25scebhn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
