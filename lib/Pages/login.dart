@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hookah1/Tools/DataTracker.dart';
+import "../Tools/Auth.dart";
+import "package:provider/provider.dart";
+import "../Tools/TextValidator.dart";
 
 class Login extends StatefulWidget {
   State<StatefulWidget> createState() {
@@ -8,9 +12,35 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  //Variables for form to function
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;
   String _username, _password;
+  String validationText = "";
+
+  // On Login Function
+  void onSignInClick() async {
+    if (_key.currentState.validate()) {
+      // No any error in validation
+      _key.currentState.save();
+      print("username $_username");
+      print("password $_password");
+      Auth authObj = Provider.of<DataTracker>(context).auth;
+      String message = await authObj.signIn(_username, _password);
+      if (message == "") {
+        Navigator.pushReplacementNamed(context, '/shop');
+      } else {
+        setState(() {
+          validationText = message;
+        });
+      }
+    } else {
+      // validation error
+      setState(() {
+        _validate = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +55,7 @@ class _LoginState extends State<Login> {
     Color buttonTextColor = Theme.of(context).backgroundColor;
     Color signupBoxBgColor = Color(0xFF510177);
     Color backgroundColor = Color(0xFF580182);
-
+    Color validationTextColor = Colors.redAccent;
     // UI COMPONENTS
 
     _hookahLogoAppBar(String title) => AppBar(
@@ -62,8 +92,8 @@ class _LoginState extends State<Login> {
       return new Column(
         children: <Widget>[
           new TextFormField(
-              decoration: _formFieldsDecoration('username'),
-              validator: validateUsername,
+              decoration: _formFieldsDecoration('email'),
+              validator: TextVaildator.validateEmail,
               onSaved: (String val) {
                 _username = val;
               }),
@@ -71,10 +101,15 @@ class _LoginState extends State<Login> {
           new TextFormField(
               decoration: _formFieldsDecoration('password'),
               obscureText: true,
-              validator: validatePassword,
+              validator: TextVaildator.validatePassword,
               onSaved: (String val) {
                 _password = val;
               }),
+          Text(
+            validationText,
+            style: TextStyle(
+                color: validationTextColor, fontWeight: FontWeight.w500),
+          ),
           new SizedBox(height: height * 0.02),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -95,7 +130,7 @@ class _LoginState extends State<Login> {
                 minWidth: width * 0.49,
                 height: height * 0.10,
                 child: new RaisedButton(
-                  onPressed: _onSignUpClick,
+                  onPressed: onSignInClick,
                   color: buttonsColor,
                   child: new Text(
                     'Sign In',
@@ -139,35 +174,5 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
-  }
-
-  //VALIDATION CHECKS
-  String validateUsername(String value) {
-    if (value.length == 0) {
-      return "Username is Required";
-    }
-    return null;
-  }
-
-  String validatePassword(String value) {
-    if (value.length == 0) {
-      return "Password is Required";
-    }
-    return null;
-  }
-
-  _onSignUpClick() {
-    if (_key.currentState.validate()) {
-      // No any error in validation
-      _key.currentState.save();
-      print("username $_username");
-      print("password $_password");
-      Navigator.pushReplacementNamed(context, '/shop');
-    } else {
-      // validation error
-      setState(() {
-        _validate = true;
-      });
-    }
   }
 }

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
+// Widget to render a card that holds all the details of the product we want to purchase.
 class ShopCard extends StatelessWidget {
-  
   //Colors
   final Color cardBackground = Colors.deepPurple;
   final Color viewButtonColor = Colors.purpleAccent;
 
-  //final String id; // Include this in constructor later.
-  final String name;
-  final String shortDescription;
-  final String longDescription;
-  final String imageUrl;
-  final double price;
+  //final String id; // Include this in Constructor later.
+  final String name; // Name of Product
+  final String shortDescription; // Short Description for the Product
+  final String longDescription; // Long Description for the Product
+  final String imageUrl; // Image to render for the Product
+  final double price; // Price for the Product
 
   ShopCard(String n, String sd, String ld, String url, double p)
       : this.name = n,
@@ -22,45 +22,41 @@ class ShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //double width = MediaQuery.of(context).size.width;
-    //double height = MediaQuery.of(context).size.height;
-
     return Card(
       color: cardBackground,
       child: Column(
-        
         children: <Widget>[
-        
           Container(
             height: 180,
             width: 300,
-            
             child: Image.network(
               imageUrl,
               fit: BoxFit.fill,
             ),
           ),
-          // Row(
-          //   children: <Widget>[
-          //     Column(
-          //       children: <Widget>[Text(name), Text(price.toString())],
-          //     )
-          //   ],
-          // ),
-          // Text(shortDescription),
-          Row(mainAxisAlignment: MainAxisAlignment.end,
-            //crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              
               Column(
                 children: <Widget>[
-                  Text(name,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800),),
-                  
-                  Text(r"$"+price.toString(),style: TextStyle(color: Colors.white,fontWeight: FontWeight.w800),),
+                  Text(
+                    name,
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w800),
+                  ),
+                  Text(
+                    r"$" + price.toString(),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w800),
+                  ),
                 ],
               ),
               Text("  "),
-              Text(shortDescription,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400),),
+              Text(
+                shortDescription,
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+              ),
               Text("      "),
               RaisedButton(
                 color: viewButtonColor,

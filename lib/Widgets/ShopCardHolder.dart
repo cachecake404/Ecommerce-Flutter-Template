@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import './ShopCard.dart';
 
+// A widget to hold all the shop cards which we can side scroll through
 class ShopCardHolder extends StatelessWidget {
-  final String title;
-  final List<ShopCard> cards;
+  final String title; // Takes in the title for the shop card holder
+  final List<ShopCard> cards; // Holds all the shops cards
   ShopCardHolder(String t, List<ShopCard> cardz)
       : title = t,
         cards = cardz;
 
   @override
   Widget build(BuildContext context) {
-    Color titleColor = Colors.deepPurple;
+    //Colors
+    Color titleColor = Colors.deepPurple; 
 
     return Container(
       child: Column(

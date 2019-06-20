@@ -3,7 +3,8 @@ import "Pages/signup.dart";
 import 'Pages/shop.dart';
 import 'Pages/login.dart';
 import 'Pages/prelogin.dart';
-
+import 'package:provider/provider.dart';
+import 'Tools/DataTracker.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
     Color themeAccentColor = Color(0xffc0c0c0);
     // Color themePrimaryColorLight = Color(0xffB/A55D3);
 
-    return MaterialApp(
+    return ChangeNotifierProvider(builder: (context)=> DataTracker(),child:MaterialApp(
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (context) => Prelogin(),
@@ -31,6 +32,6 @@ class MyApp extends StatelessWidget {
         buttonColor: themeButtonColor,
         accentColor: themeAccentColor,
       ),
-    );
+    ));
   }
 }

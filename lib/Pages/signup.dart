@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:hookah1/Tools/DataTracker.dart';
 import "../Tools/Auth.dart";
-import 'package:firebase_auth/firebase_auth.dart';
+import "package:provider/provider.dart";
+import "../Tools/TextValidator.dart";
 
 class SignUp extends StatefulWidget {
   State<StatefulWidget> createState() {
@@ -11,31 +13,38 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  //Variable for the form to function
   GlobalKey<FormState> _key = new GlobalKey();
   TextEditingController pEdit = new TextEditingController();
-  bool _validate = false;
+
   String _fname,
       _lname,
       _email,
       _phoneNumber,
       _address,
-      _username,
       _password,
       _confirmPassword;
-  FirebaseUser user;
-   
-  DateTime timeNow = DateTime.now();
-  
-  void setUser() async
-  {
+  String errorString = "";
+
+  // Function to set user on signup
+
+  void setUser(BuildContext context) async {
     Auth authHandler = new Auth();
-    FirebaseUser us = await authHandler.signUp(_email, _password);
-    setState(() {
-     user = us; 
-    });
-    print(us.providerData);
+    String message = await authHandler.signUp(_email, _password);
+    if (message == "") {
+      print("No errors !");
+      var dataTracker = Provider.of<DataTracker>(context);
+      dataTracker.auth = authHandler;
+      Navigator.pushReplacementNamed(context, '/shop');
+    } else {
+      setState(() {
+        errorString = message;
+      });
+    }
   }
 
+  // Function for picking date
+  DateTime timeNow = DateTime.now();
   Future<void> selectedDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
@@ -50,12 +59,62 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
+  //VALIDATION CHECKS
+  bool _validate = false;
 
+  // Custom Validation
+  String validateConfirmPassword(String value) {
+    String pass = pEdit.text;
+    if (value.length == 0) {
+      return "Confirm Password is Required";
+    }
+
+    if (value.toString() != pass.toString()) {
+      return "Passwords do not match";
+    }
+
+    int dur = DateTime.now().difference(timeNow).inDays; // 6570 is 18 years old
+
+    if (dur < 6570) {
+      return "You need to be 18 years old to sign up!";
+    }
+    return null;
+  }
+
+  // On sumbit function to execute
+
+  void onSignUpClick(BuildContext context) {
+    if (_key.currentState.validate()) {
+      // No any error in validation
+      _key.currentState.save();
+      print("First Name $_fname");
+      print("Last Name $_lname");
+      print("Email $_email");
+      print("Mobile $_phoneNumber");
+      print("Address $_address");
+      print("Day is " +
+          timeNow.day.toString() +
+          " Month is " +
+          timeNow.month.toString() +
+          " Year is " +
+          timeNow.year.toString());
+      print("password $_password");
+      print("confirm password $_confirmPassword");
+      setUser(context);
+    } else {
+      // validation error
+      setState(() {
+        _validate = true;
+      });
+    }
+  }
+
+  //Building widget
 
   @override
   Widget build(BuildContext context) {
-
-    String formattedDate = DateFormat('MM-dd-yyyy').format(timeNow); // String form of time;
+    String formattedDate =
+        DateFormat('MM-dd-yyyy').format(timeNow); // String form of time;
 
     //used to get height and width of current screen
     double width = MediaQuery.of(context).size.width;
@@ -63,12 +122,13 @@ class _SignUpState extends State<SignUp> {
 
     //Colors
     Color appBarColor = Theme.of(context).buttonColor;
-    Color hintStyleColor = Theme.of(context).accentColor;
     Color buttonsColor = Theme.of(context).accentColor;
+    Color hintStyleColor = Theme.of(context).accentColor;
     Color buttonTextColor = Theme.of(context).backgroundColor;
     Color signupBoxBgColor = Color(0xFF510177);
     Color backgroundColor = Color(0xFF580182);
     Color dobTextColor = Colors.white;
+    Color errorTextColor = Colors.redAccent;
 
     // UI COMPONENTS
 
@@ -108,7 +168,7 @@ class _SignUpState extends State<SignUp> {
           new TextFormField(
             // decoration: new InputDecoration(hintText: 'Name'),
             decoration: _formFieldsDecoration("First Name"),
-            validator: validateName,
+            validator: TextVaildator.validateName,
             onSaved: (String val) {
               _fname = val;
             },
@@ -117,7 +177,7 @@ class _SignUpState extends State<SignUp> {
           new TextFormField(
             // decoration: new InputDecoration(hintText: 'Name'),
             decoration: _formFieldsDecoration("Last Name"),
-            validator: validateName,
+            validator: TextVaildator.validateName,
             onSaved: (String val) {
               _lname = val;
             },
@@ -126,7 +186,7 @@ class _SignUpState extends State<SignUp> {
           new TextFormField(
               decoration: _formFieldsDecoration('email'),
               keyboardType: TextInputType.emailAddress,
-              validator: validateEmail,
+              validator: TextVaildator.validateEmail,
               onSaved: (String val) {
                 _email = val;
               }),
@@ -134,42 +194,45 @@ class _SignUpState extends State<SignUp> {
           new TextFormField(
               decoration: _formFieldsDecoration('phone'),
               keyboardType: TextInputType.phone,
-              validator: validatePhone,
+              validator: TextVaildator.validatePhone,
               onSaved: (String val) {
                 _phoneNumber = val;
               }),
           new SizedBox(height: height * 0.01),
           new TextFormField(
               decoration: _formFieldsDecoration('Address'),
-              validator: validateUsername,
+              validator: TextVaildator.validateString,
               onSaved: (String val) {
                 _address = val;
               }),
           new SizedBox(height: height * 0.03),
           new Row(
             children: <Widget>[
-              Text("  Date of Birth: ",style: TextStyle(color: dobTextColor,fontWeight: FontWeight.w800),),
-              Text(formattedDate ,style: TextStyle(color: dobTextColor,fontWeight: FontWeight.w500),),
+              Text(
+                "  Date of Birth: ",
+                style:
+                    TextStyle(color: dobTextColor, fontWeight: FontWeight.w800),
+              ),
+              Text(
+                formattedDate,
+                style:
+                    TextStyle(color: dobTextColor, fontWeight: FontWeight.w500),
+              ),
               Spacer(),
               RaisedButton(
-                onPressed: () {selectedDate(context);},
+                onPressed: () {
+                  selectedDate(context);
+                },
                 child: Text("Select"),
               )
             ],
           ),
           new SizedBox(height: height * 0.03),
           new TextFormField(
-              decoration: _formFieldsDecoration('username'),
-              validator: validateUsername,
-              onSaved: (String val) {
-                _username = val;
-              }),
-          new SizedBox(height: height * 0.01),
-          new TextFormField(
               controller: pEdit,
               decoration: _formFieldsDecoration('password'),
               obscureText: true,
-              validator: validatePassword,
+              validator: TextVaildator.validatePassword,
               onSaved: (String val) {
                 _password = val;
               }),
@@ -182,11 +245,18 @@ class _SignUpState extends State<SignUp> {
                 _confirmPassword = val;
               }),
           new SizedBox(height: height * 0.01),
+          Text(
+            errorString,
+            style:
+                TextStyle(color: errorTextColor, fontWeight: FontWeight.w500),
+          ),
           new ButtonTheme(
             minWidth: width * 0.49,
             height: height * 0.10,
             child: new RaisedButton(
-              onPressed: _onSignUpClick,
+              onPressed: () {
+                onSignUpClick(context);
+              },
               color: buttonsColor,
               child: new Text(
                 'Sign Up',
@@ -228,102 +298,5 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     );
-  }
-
-  //VALIDATION CHECKS
-
-  String validateName(String value) {
-    String patttern = r'(^[a-zA-Z\s]*$)';
-    RegExp regExp = new RegExp(patttern);
-    if (value.length == 0) {
-      return "Name is Required";
-    } else if (!regExp.hasMatch(value)) {
-      return "Name must be a-z and A-Z";
-    }
-    return null;
-  }
-
-  String validatePhone(String value) {
-    String patttern = r'(^[0-9]*$)';
-    RegExp regExp = new RegExp(patttern);
-    if (value.length == 0) {
-      return "Mobile is Required";
-    } else if (value.length != 10) {
-      return "Mobile number must 10 digits";
-    } else if (!regExp.hasMatch(value)) {
-      return "Mobile Number must be digits";
-    }
-    return null;
-  }
-
-  String validateEmail(String value) {
-    String pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regExp = new RegExp(pattern);
-    if (value.length == 0) {
-      return "Email is Required";
-    } else if (!regExp.hasMatch(value)) {
-      return "Invalid Email";
-    } else {
-      return null;
-    }
-  }
-
-  String validateUsername(String value) {
-    if (value.length == 0) {
-      return "Username is Required";
-    }
-    return null;
-  }
-
-  String validatePassword(String value) {
-    if (value.length == 0) {
-      return "Password is Required";
-    }
-
-    return null;
-  }
-
-  String validateConfirmPassword(String value) {
-    String pass = pEdit.text;
-    if (value.length == 0) {
-      return "Confirm Password is Required";
-    }
-    
-    if (value.toString() != pass.toString()) {
-      return "Passwords do not match";
-    }
-
-    int dur = DateTime.now().difference(timeNow).inDays; // 6570 is 18 years old
-    
-    if(dur < 6570)
-    {
-      return "You need to be 18 years old to sign up!";
-    }
-    return null;
-  }
-
-  _onSignUpClick() {
-    if (_key.currentState.validate()) {
-      // No any error in validation
-      _key.currentState.save();
-      print("First Name $_fname");
-      print("Last Name $_lname");
-      print("Email $_email");
-      print("Mobile $_phoneNumber");
-      print("Address $_address");
-      print("Day is "+timeNow.day.toString()+" Month is "+timeNow.month.toString()+" Year is "+timeNow.year.toString());
-      print("username $_username");
-      print("password $_password");
-      print("confirm password $_confirmPassword");
-      //setUser();
-     
-      Navigator.pushReplacementNamed(context, '/shop');
-    } else {
-      // validation error
-      setState(() {
-        _validate = true;
-      });
-    }
   }
 }
