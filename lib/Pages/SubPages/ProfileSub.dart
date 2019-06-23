@@ -9,27 +9,30 @@ class ProfileSub extends StatefulWidget {
 }
 
 class _ProfileSubState extends State<ProfileSub> {
-  
   String details = "Hello";
 
-  bool initalGet = false; 
+  bool initalGet = false;
   void getUserDetails(BuildContext context) async {
-    FirebaseUser us = await Provider.of<DataTracker>(context).auth.getCurrentUser();
+    DataTracker dataManager = Provider.of<DataTracker>(context);
+    FirebaseUser us = dataManager.user;
+
+    Map<String, dynamic> userDetails = dataManager.customData;
     setState(() {
-     details = us.email; 
+      details = userDetails["name"] +
+          "\n" +
+          userDetails["age"].toString() +
+          "\n" +
+          us.email;
     });
-    print(us);  
-    
   }
 
   @override
   Widget build(BuildContext context) {
-    if(initalGet==false)
-    {
+    if (initalGet == false) {
       getUserDetails(context);
       initalGet = true;
     }
-    
+
     return Text(details);
   }
 }

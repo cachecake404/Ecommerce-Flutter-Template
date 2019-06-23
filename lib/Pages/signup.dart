@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -5,6 +6,7 @@ import 'package:hookah1/Tools/DataTracker.dart';
 import "../Tools/Auth.dart";
 import "package:provider/provider.dart";
 import "../Tools/TextValidator.dart";
+import "../Tools/UserDataManager.dart";
 
 class SignUp extends StatefulWidget {
   State<StatefulWidget> createState() {
@@ -33,8 +35,15 @@ class _SignUpState extends State<SignUp> {
     String message = await authHandler.signUp(_email, _password);
     if (message == "") {
       print("No errors !");
+      //Setting user to be used by provider globally
       var dataTracker = Provider.of<DataTracker>(context);
       dataTracker.auth = authHandler;
+      //Adding custom user data
+      FirebaseUser user = Provider.of<DataTracker>(context).user;
+      UserDataManager umanager = new UserDataManager(user);
+      int ageDays = (DateTime.now().difference(timeNow).inDays);
+      umanager.postData(_fname + " " + _lname, ageDays ~/ 365);
+      //Change screen
       Navigator.pushReplacementNamed(context, '/shop');
     } else {
       setState(() {
@@ -273,6 +282,7 @@ class _SignUpState extends State<SignUp> {
       );
     }
 
+    //Build Page
     return MaterialApp(
       home: new Scaffold(
         appBar: _hookahLogoAppBar("Hookah Express"),

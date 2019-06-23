@@ -25,8 +25,9 @@ class _LoginState extends State<Login> {
       _key.currentState.save();
       print("username $_username");
       print("password $_password");
-      Auth authObj = Provider.of<DataTracker>(context).auth;
+      Auth authObj = new Auth();
       String message = await authObj.signIn(_username, _password);
+      Provider.of<DataTracker>(context).auth = authObj;
       if (message == "") {
         Navigator.pushReplacementNamed(context, '/shop');
       } else {
