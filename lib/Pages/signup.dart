@@ -32,17 +32,17 @@ class _SignUpState extends State<SignUp> {
 
   void setUser(BuildContext context) async {
     Auth authHandler = new Auth();
-    String message = await authHandler.signUp(_email, _password);
+    String message = await authHandler.signUp(_email.trim(), _password);
     if (message == "") {
       print("No errors !");
       //Setting user to be used by provider globally
       var dataTracker = Provider.of<DataTracker>(context);
-      dataTracker.auth = authHandler;
       //Adding custom user data
-      FirebaseUser user = Provider.of<DataTracker>(context).user;
+      FirebaseUser user = await authHandler.getCurrentUser();
       UserDataManager umanager = new UserDataManager(user);
       int ageDays = (DateTime.now().difference(timeNow).inDays);
-      umanager.postData(_fname + " " + _lname, ageDays ~/ 365);
+      await umanager.postData({"first_name":_fname ,"last_name" : _lname, "age":ageDays ~/ 365,"phone":_phoneNumber,"address":_address});
+      dataTracker.auth = authHandler;
       //Change screen
       Navigator.pushReplacementNamed(context, '/shop');
     } else {

@@ -18,11 +18,17 @@ class _ProfileSubState extends State<ProfileSub> {
 
     Map<String, dynamic> userDetails = dataManager.customData;
     setState(() {
-      details = userDetails["name"] +
+      details = userDetails["first_name"] +
           "\n" +
-          userDetails["age"].toString() +
+          userDetails["last_name"] +
           "\n" +
-          us.email;
+          userDetails["address"] +
+          "\n" +
+          us.email +
+          "\n" +
+          userDetails["phone"] +
+          "\n" +
+          userDetails["age"].toString();
     });
   }
 

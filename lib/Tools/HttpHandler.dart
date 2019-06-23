@@ -19,8 +19,19 @@ class HttpHandler {
     return responseData;
   }
 
+    Future<Map<String, dynamic>> updateData(
+      Map<String, dynamic> dataToBeSend,String key) async {
+    http.Response response = await http.put(url + endpoint+"/" +key + ".json",
+        body: json.encode(dataToBeSend),
+        headers: {"Content-Type": "application/json"});
+
+    Map<String, dynamic> responseData = json.decode(response.body);
+    return responseData;
+  }
+
   Future<Map<String, dynamic>> getData() async {
-    final http.Response response = await http.get(url + endpoint + ".json");
+    final http.Response response = await http.get(url + endpoint + ".json",
+        headers: {"Content-Type": "application/json"});
 
     Map<String, dynamic> responseData = json.decode(response.body);
 
