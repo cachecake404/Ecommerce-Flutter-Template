@@ -19,8 +19,9 @@ class _LoginState extends State<Login> {
   String validationText = "";
 
   // On Login Function
-  void onSignInClick() async {
+  void onSignInClick(BuildContext contxt) async {
     if (_key.currentState.validate()) {
+      Provider.of<DataTracker>(context).isLoading = true;
       // No any error in validation
       _key.currentState.save();
       print("username $_username");
@@ -28,6 +29,7 @@ class _LoginState extends State<Login> {
       Auth authObj = new Auth();
       String message = await authObj.signIn(_username.trim(), _password);
       Provider.of<DataTracker>(context).auth = authObj;
+      Provider.of<DataTracker>(context).isLoading = false;
       if (message == "") {
         Navigator.pushReplacementNamed(context, '/shop');
       } else {
@@ -57,6 +59,7 @@ class _LoginState extends State<Login> {
     Color signupBoxBgColor = Color(0xFF510177);
     Color backgroundColor = Color(0xFF580182);
     Color validationTextColor = Colors.redAccent;
+    Color inputTextColor = Colors.white;
     // UI COMPONENTS
 
     _hookahLogoAppBar(String title) => AppBar(
@@ -93,6 +96,7 @@ class _LoginState extends State<Login> {
       return new Column(
         children: <Widget>[
           new TextFormField(
+              style: new TextStyle(color: inputTextColor),
               decoration: _formFieldsDecoration('email'),
               validator: TextVaildator.validateEmail,
               onSaved: (String val) {
@@ -100,6 +104,7 @@ class _LoginState extends State<Login> {
               }),
           new SizedBox(height: height * 0.02),
           new TextFormField(
+              style: new TextStyle(color: inputTextColor),
               decoration: _formFieldsDecoration('password'),
               obscureText: true,
               validator: TextVaildator.validatePassword,
@@ -128,22 +133,25 @@ class _LoginState extends State<Login> {
               Spacer(),
               Spacer(),
               new ButtonTheme(
-                minWidth: width * 0.49,
-                height: height * 0.10,
-                child: new RaisedButton(
-                  onPressed: onSignInClick,
-                  color: buttonsColor,
-                  child: new Text(
-                    'Sign In',
-                    style: TextStyle(
-                      color: buttonTextColor,
-                      fontSize: 30,
+                  minWidth: width * 0.49,
+                  height: height * 0.10,
+                  child: Provider.of<DataTracker>(context).loadingWidget(
+                    RaisedButton(
+                      onPressed: () {
+                        onSignInClick(context);
+                      },
+                      color: buttonsColor,
+                      child: new Text(
+                        'Sign In',
+                        style: TextStyle(
+                          color: buttonTextColor,
+                          fontSize: 30,
+                        ),
+                      ),
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(40.0)),
                     ),
-                  ),
-                  shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(40.0)),
-                ),
-              ),
+                  )),
             ],
           )
         ],

@@ -5,6 +5,7 @@ import 'Pages/login.dart';
 import 'Pages/prelogin.dart';
 import 'package:provider/provider.dart';
 import 'Tools/DataTracker.dart';
+import "Pages/splash.dart";
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -21,10 +22,11 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(builder: (context)=> DataTracker(),child:MaterialApp(
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
-        '/': (context) => Prelogin(),
+        '/': (context) => Splash(),
         '/login': (context) => Login(),
         '/shop': (context) => Shop(),
         '/signup': (context) => SignUp(),
+        '/prelogin': (context) => Prelogin()
       },
       title: "Hookah Express",
       theme: ThemeData(

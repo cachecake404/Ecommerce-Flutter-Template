@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // import '../Pages/ordercard.dart';
 
 class Prelogin extends StatelessWidget {
+  // Build Widget
   @override
   Widget build(BuildContext context) {
     //used to get height and width of current screen

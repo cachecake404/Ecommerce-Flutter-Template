@@ -34,18 +34,25 @@ class _SignUpState extends State<SignUp> {
     Auth authHandler = new Auth();
     String message = await authHandler.signUp(_email.trim(), _password);
     if (message == "") {
-      print("No errors !");
       //Setting user to be used by provider globally
       var dataTracker = Provider.of<DataTracker>(context);
       //Adding custom user data
       FirebaseUser user = await authHandler.getCurrentUser();
       UserDataManager umanager = new UserDataManager(user);
       int ageDays = (DateTime.now().difference(timeNow).inDays);
-      await umanager.postData({"first_name":_fname ,"last_name" : _lname, "age":ageDays ~/ 365,"phone":_phoneNumber,"address":_address});
+      await umanager.postData({
+        "first_name": _fname,
+        "last_name": _lname,
+        "age": ageDays ~/ 365,
+        "phone": _phoneNumber,
+        "address": _address
+      });
       dataTracker.auth = authHandler;
+      Provider.of<DataTracker>(context).isLoading = false;
       //Change screen
       Navigator.pushReplacementNamed(context, '/shop');
     } else {
+      Provider.of<DataTracker>(context).isLoading = false;
       setState(() {
         errorString = message;
       });
@@ -94,6 +101,7 @@ class _SignUpState extends State<SignUp> {
 
   void onSignUpClick(BuildContext context) {
     if (_key.currentState.validate()) {
+      Provider.of<DataTracker>(context).isLoading = true;
       // No any error in validation
       _key.currentState.save();
       print("First Name $_fname");
@@ -138,6 +146,7 @@ class _SignUpState extends State<SignUp> {
     Color backgroundColor = Color(0xFF580182);
     Color dobTextColor = Colors.white;
     Color errorTextColor = Colors.redAccent;
+    Color inputTextColor = Colors.white;
 
     // UI COMPONENTS
 
@@ -175,7 +184,7 @@ class _SignUpState extends State<SignUp> {
       return new Column(
         children: <Widget>[
           new TextFormField(
-            // decoration: new InputDecoration(hintText: 'Name'),
+            style: new TextStyle(color: inputTextColor),
             decoration: _formFieldsDecoration("First Name"),
             validator: TextVaildator.validateName,
             onSaved: (String val) {
@@ -184,7 +193,7 @@ class _SignUpState extends State<SignUp> {
           ),
           new SizedBox(height: height * 0.01),
           new TextFormField(
-            // decoration: new InputDecoration(hintText: 'Name'),
+            style: new TextStyle(color: inputTextColor),
             decoration: _formFieldsDecoration("Last Name"),
             validator: TextVaildator.validateName,
             onSaved: (String val) {
@@ -193,6 +202,7 @@ class _SignUpState extends State<SignUp> {
           ),
           new SizedBox(height: height * 0.03),
           new TextFormField(
+              style: new TextStyle(color: inputTextColor),
               decoration: _formFieldsDecoration('email'),
               keyboardType: TextInputType.emailAddress,
               validator: TextVaildator.validateEmail,
@@ -201,6 +211,7 @@ class _SignUpState extends State<SignUp> {
               }),
           new SizedBox(height: height * 0.01),
           new TextFormField(
+              style: new TextStyle(color: inputTextColor),
               decoration: _formFieldsDecoration('phone'),
               keyboardType: TextInputType.phone,
               validator: TextVaildator.validatePhone,
@@ -209,6 +220,7 @@ class _SignUpState extends State<SignUp> {
               }),
           new SizedBox(height: height * 0.01),
           new TextFormField(
+              style: new TextStyle(color: inputTextColor),
               decoration: _formFieldsDecoration('Address'),
               validator: TextVaildator.validateString,
               onSaved: (String val) {
@@ -260,24 +272,25 @@ class _SignUpState extends State<SignUp> {
                 TextStyle(color: errorTextColor, fontWeight: FontWeight.w500),
           ),
           new ButtonTheme(
-            minWidth: width * 0.49,
-            height: height * 0.10,
-            child: new RaisedButton(
-              onPressed: () {
-                onSignUpClick(context);
-              },
-              color: buttonsColor,
-              child: new Text(
-                'Sign Up',
-                style: TextStyle(
-                  color: buttonTextColor,
-                  fontSize: 30,
+              minWidth: width * 0.49,
+              height: height * 0.10,
+              child: Provider.of<DataTracker>(context).loadingWidget(
+                new RaisedButton(
+                  onPressed: () {
+                    onSignUpClick(context);
+                  },
+                  color: buttonsColor,
+                  child: new Text(
+                    'Sign Up',
+                    style: TextStyle(
+                      color: buttonTextColor,
+                      fontSize: 30,
+                    ),
+                  ),
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(40.0)),
                 ),
-              ),
-              shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(40.0)),
-            ),
-          ),
+              )),
         ],
       );
     }
