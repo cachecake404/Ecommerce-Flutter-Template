@@ -5,6 +5,7 @@ import "Auth.dart";
 import "../Widgets/ShopCard.dart";
 import "./ProductsHandler.dart";
 import "package:flutter/material.dart";
+import "OrderManager.dart";
 
 class DataTracker with ChangeNotifier {
   //Track Loading Objects
@@ -37,6 +38,9 @@ class DataTracker with ChangeNotifier {
       _allCards.add(cards);
     }
   }
+  // Track Orders
+  List<ShopItem> _shopItems = new List<ShopItem>();
+  List<ShopItem> get shopItems => _shopItems;
 
   // Tracking unique key associated with customer data
   String _customDataKey;

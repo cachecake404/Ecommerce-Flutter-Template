@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import '../Pages/ordercard.dart';
 
 class Prelogin extends StatelessWidget {
   // Build Widget
@@ -54,13 +53,6 @@ class Prelogin extends StatelessWidget {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            // Ordercard(
-            //   resturantName: "hookah express",
-            //   resturantLocation: "Arlington, TX",
-            //   orderDeliveredTime: "05/05/2019 - 12:00 AM",
-            //   delivered: true,
-            //   totalCost: 21.36,
-            // ),
             Image.asset(
               "lib/Assets/hookah_express.png",
               alignment: Alignment.center,

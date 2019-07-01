@@ -85,7 +85,7 @@ class ShopState extends State<Shop> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.shopping_cart),
-            onPressed: () {},
+            onPressed: () {Navigator.pushNamed(context, '/cart');},
           )
         ],
       ),

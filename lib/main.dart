@@ -6,6 +6,7 @@ import 'Pages/prelogin.dart';
 import 'package:provider/provider.dart';
 import 'Tools/DataTracker.dart';
 import "Pages/splash.dart";
+import "Pages/cart.dart";
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => Login(),
         '/shop': (context) => Shop(),
         '/signup': (context) => SignUp(),
-        '/prelogin': (context) => Prelogin()
+        '/prelogin': (context) => Prelogin(),
+        '/cart': (context) => Cart(),
       },
       title: "Hookah Express",
       theme: ThemeData(

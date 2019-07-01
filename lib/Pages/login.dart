@@ -122,19 +122,21 @@ class _LoginState extends State<Login> {
             children: <Widget>[
               Spacer(),
               IconButton(
+                iconSize: 45,
                 icon: Image.asset("lib/Assets/facebook_icon.png"),
                 onPressed: () {},
               ),
               Spacer(),
               IconButton(
+                iconSize: 45,
                 icon: Image.asset("lib/Assets/google_icon.png"),
                 onPressed: () {},
               ),
               Spacer(),
               Spacer(),
               new ButtonTheme(
-                  minWidth: width * 0.49,
-                  height: height * 0.10,
+                  minWidth: width * 0.48,
+                  height: height * 0.08,
                   child: Provider.of<DataTracker>(context).loadingWidget(
                     RaisedButton(
                       onPressed: () {

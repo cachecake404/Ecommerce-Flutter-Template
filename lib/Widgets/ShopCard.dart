@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import "../Pages/DataPages/ProductDetails.dart";
 
 // Widget to render a card that holds all the details of the product we want to purchase.
 class ShopCard extends StatelessWidget {
   //Colors
   final Color cardBackground = Colors.deepPurple;
-  final Color viewButtonColor = Colors.purpleAccent;
+  final Color viewButtonColor = Color(0xFF672185);
 
   //final String id; // Include this in Constructor later.
   final String name; // Name of Product
@@ -60,8 +61,16 @@ class ShopCard extends StatelessWidget {
               Text("      "),
               RaisedButton(
                 color: viewButtonColor,
-                child: Text("View"),
-                onPressed: () {},
+                child: Text("View",style: TextStyle(
+                        color: Colors.white)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetails(this),
+                    ),
+                  );
+                },
               ),
             ],
           ),
