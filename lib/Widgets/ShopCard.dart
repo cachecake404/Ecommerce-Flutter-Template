@@ -23,58 +23,65 @@ class ShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //used to get height and width of current screen
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Card(
       color: cardBackground,
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 180,
-            width: 300,
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.fill,
+      child: Container(
+        height: height*0.36,
+        width: width*0.74,
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 180,
+              width: 300,
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.fill,
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text(
-                    name,
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w800),
-                  ),
-                  Text(
-                    r"$" + price.toString(),
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w800),
-                  ),
-                ],
-              ),
-              Text("  "),
-              Text(
-                shortDescription,
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
-              ),
-              Text("      "),
-              RaisedButton(
-                color: viewButtonColor,
-                child: Text("View",style: TextStyle(
-                        color: Colors.white)),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetails(this),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Text(
+                      name,
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w800),
                     ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ],
+                    Text(
+                      r"$" + price.toString(),
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w800),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Text(
+                  shortDescription,
+                  style:
+                      TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+                ),
+                Spacer(),
+                RaisedButton(
+                  color: viewButtonColor,
+                  child: Text("View",style: TextStyle(
+                          color: Colors.white)),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductDetails(this),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -10,6 +10,9 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  //Colors
+  Color appBarColor = Colors.deepPurpleAccent;
+  Color orderCardsContainer = Colors.grey[300];
   Widget cartItemsGen(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     if (Provider.of<DataTracker>(context).shopItems.length == 0) {
@@ -19,7 +22,11 @@ class _CartState extends State<Cart> {
         ),
       );
     } else {
-      return Container(height: height * 0.40, child: OrderCardHolder(context));
+      return Container(
+        height: height * 0.40,
+        child: OrderCardHolder(context),
+        color: orderCardsContainer,
+      );
     }
   }
 
@@ -27,7 +34,6 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     //double width = MediaQuery.of(context).size.width;
 
-    Color appBarColor = Colors.deepPurpleAccent;
     return Scaffold(
       appBar: AppBar(
         title: Text("Cart"),
