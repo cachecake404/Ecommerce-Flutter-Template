@@ -26,6 +26,20 @@ class _SplashState extends State<Splash> {
   };
 
   bool firstLoad = true;
+  
+  // Sample Function To Update Data
+  // void updateSample(BuildContext context) {
+  //   // Get current data to change and update
+  //   DataTracker dataManager = Provider.of<DataTracker>(context);
+  //   UserDataManager userHandler = new UserDataManager(dataManager.user);
+  //   Map<String, dynamic> updatedData = dataManager.customData;
+  //   // Data to update
+  //   updatedData["first_name"] = "Sam";
+  //   // Submit the update
+  //   userHandler.updateData(updatedData, dataManager.customDataKey);
+  //   dataManager.autoSetData();
+  // }
+
 
   void initState() {
     super.initState();

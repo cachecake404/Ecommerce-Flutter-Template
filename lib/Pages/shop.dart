@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import "./SubPages/OrderSub.dart";
 import "./SubPages/ProfileSub.dart";
 import "./SubPages/ShopSub.dart";
-import "./SubPages/SearchSub.dart";
+import 'package:hookah1/Tools/DataTracker.dart';
+import "package:provider/provider.dart";
+import "../Widgets/Searcher.dart";
+import "../Widgets/ShopCard.dart";
 
 //import 'package:flutter/painting.dart';
 
@@ -22,6 +25,17 @@ class ShopState extends State<Shop> {
   Color appBarColor = Colors.deepPurple;
   Color backgroundColorScaffold = Colors.white;
   Color selectedBottomItemColor = Colors.greenAccent;
+  // Get Cards for Search
+  Map<String, ShopCard> getCardMap(BuildContext context) {
+    List<List<ShopCard>> shopCards = Provider.of<DataTracker>(context).allCards;
+    Map<String, ShopCard> cardsMap = new Map<String, ShopCard>();
+    for (int i = 0; i < shopCards.length; i++) {
+      for (int j = 0; j < shopCards[i].length; j++) {
+        cardsMap[shopCards[i][j].name] = shopCards[i][j];
+      }
+    }
+    return cardsMap;
+  }
 
 //Variables for Bottom Bar
   int _selectedIndex = 0;
@@ -30,12 +44,16 @@ class ShopState extends State<Shop> {
 // Function for Bottom Bar
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      if (index != 1) {
+        _selectedIndex = index;
+      }
+
       if (index == 0) {
         currentWidgetView = ShopSub();
       }
       if (index == 1) {
-        currentWidgetView = SearchSub();
+        showSearch(context: context, delegate: DataSearch(getCardMap(context)));
+        //currentWidgetView = SearchSub();
       }
       if (index == 2) {
         currentWidgetView = OrderSub();
@@ -85,7 +103,9 @@ class ShopState extends State<Shop> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.shopping_cart),
-            onPressed: () {Navigator.pushNamed(context, '/cart');},
+            onPressed: () {
+              Navigator.pushNamed(context, '/cart');
+            },
           )
         ],
       ),
@@ -112,7 +132,9 @@ class ShopState extends State<Shop> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: selectedBottomItemColor,
-        onTap: _onItemTapped,
+        onTap: (val) {
+          _onItemTapped(val);
+        },
       ),
     );
   }
