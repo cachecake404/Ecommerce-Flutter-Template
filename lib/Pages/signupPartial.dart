@@ -8,56 +8,41 @@ import "package:provider/provider.dart";
 import "../Tools/TextValidator.dart";
 import "../Tools/UserDataManager.dart";
 
-class SignUp extends StatefulWidget {
+class SignUpPartial extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _SignUpState();
   }
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpState extends State<SignUpPartial> {
   //Variable for the form to function
   GlobalKey<FormState> _key = new GlobalKey();
   TextEditingController pEdit = new TextEditingController();
 
-  String _fname,
-      _lname,
-      _email,
-      _phoneNumber,
-      _address,
-      _password,
-      _confirmPassword;
+  String _fname, _lname, _phoneNumber, _address;
   String errorString = "";
-
-  // Function to set user on signup
-
+  
+  // Set the Users Details in Database;
   void setUser(BuildContext context) async {
     Auth authHandler = new Auth();
-    String message = await authHandler.signUp(_email.trim(), _password);
-    if (message == "") {
-      //Setting user to be used by provider globally
-      var dataTracker = Provider.of<DataTracker>(context);
-      //Adding custom user data
-      FirebaseUser user = await authHandler.getCurrentUser();
-      UserDataManager umanager = new UserDataManager(user);
-      int ageDays = (DateTime.now().difference(timeNow).inDays);
-      await umanager.postData({
-        "first_name": _fname,
-        "last_name": _lname,
-        "age": ageDays ~/ 365,
-        "phone": _phoneNumber,
-        "address": _address
-      });
-      dataTracker.auth = authHandler;
-      await Provider.of<DataTracker>(context).autoSetData();
-      Provider.of<DataTracker>(context).isLoading = false;
-      //Change screen
-      Navigator.pushReplacementNamed(context, '/shop');
-    } else {
-      Provider.of<DataTracker>(context).isLoading = false;
-      setState(() {
-        errorString = message;
-      });
-    }
+    //Setting user to be used by provider globally
+    var dataTracker = Provider.of<DataTracker>(context);
+    //Adding custom user data
+    FirebaseUser user = await authHandler.getCurrentUser();
+    UserDataManager umanager = new UserDataManager(user);
+    int ageDays = (DateTime.now().difference(timeNow).inDays);
+    await umanager.postData({
+      "first_name": _fname,
+      "last_name": _lname,
+      "age": ageDays ~/ 365,
+      "phone": _phoneNumber,
+      "address": _address
+    });
+    dataTracker.auth = authHandler;
+    await Provider.of<DataTracker>(context).autoSetData();
+    Provider.of<DataTracker>(context).isLoading = false;
+    //Change screen
+    Navigator.pushReplacementNamed(context, '/shop');
   }
 
   // Function for picking date
@@ -79,46 +64,38 @@ class _SignUpState extends State<SignUp> {
   //VALIDATION CHECKS
   bool _validate = false;
 
-  // Custom Validation
-  String validateConfirmPassword(String value) {
-    String pass = pEdit.text;
-    if (value.length == 0) {
-      return "Confirm Password is Required";
-    }
-
-    if (value.toString() != pass.toString()) {
-      return "Passwords do not match";
-    }
-
+  // If legal returns true
+  bool checkAge() {
     int dur = DateTime.now().difference(timeNow).inDays; // 6570 is 18 years old
 
     if (dur < 6570) {
-      return "You need to be 18 years old to sign up!";
+      return false;
+    } else {
+      return true;
     }
-    return null;
   }
-
   // On sumbit function to execute
 
   void onSignUpClick(BuildContext context) {
     if (_key.currentState.validate()) {
+      setState(() {
+        errorString = "";
+      });
       Provider.of<DataTracker>(context).isLoading = true;
       // No any error in validation
       _key.currentState.save();
-      print("First Name $_fname");
-      print("Last Name $_lname");
-      print("Email $_email");
-      print("Mobile $_phoneNumber");
-      print("Address $_address");
-      print("Day is " +
-          timeNow.day.toString() +
-          " Month is " +
-          timeNow.month.toString() +
-          " Year is " +
-          timeNow.year.toString());
-      print("password $_password");
-      print("confirm password $_confirmPassword");
-      setUser(context);
+      if (!checkAge()) {
+        setState(() {
+          errorString = "You need to be at least 18 years old to sign up";
+        });
+        Provider.of<DataTracker>(context).isLoading = false;
+      } else {
+        setState(() {
+          errorString = "";
+        });
+        setUser(context);
+      }
+      //setUser(context);
     } else {
       // validation error
       setState(() {
@@ -204,15 +181,6 @@ class _SignUpState extends State<SignUp> {
           new SizedBox(height: height * 0.03),
           new TextFormField(
               style: new TextStyle(color: inputTextColor),
-              decoration: _formFieldsDecoration('email'),
-              keyboardType: TextInputType.emailAddress,
-              validator: TextVaildator.validateEmail,
-              onSaved: (String val) {
-                _email = val;
-              }),
-          new SizedBox(height: height * 0.01),
-          new TextFormField(
-              style: new TextStyle(color: inputTextColor),
               decoration: _formFieldsDecoration('phone'),
               keyboardType: TextInputType.phone,
               validator: TextVaildator.validatePhone,
@@ -227,7 +195,7 @@ class _SignUpState extends State<SignUp> {
               onSaved: (String val) {
                 _address = val;
               }),
-          new SizedBox(height: height * 0.03),
+          new SizedBox(height: height * 0.01),
           new Row(
             children: <Widget>[
               Text(
@@ -249,23 +217,6 @@ class _SignUpState extends State<SignUp> {
               )
             ],
           ),
-          new SizedBox(height: height * 0.03),
-          new TextFormField(
-              controller: pEdit,
-              decoration: _formFieldsDecoration('password'),
-              obscureText: true,
-              validator: TextVaildator.validatePassword,
-              onSaved: (String val) {
-                _password = val;
-              }),
-          new SizedBox(height: height * 0.01),
-          new TextFormField(
-              decoration: _formFieldsDecoration('confirm password'),
-              obscureText: true,
-              validator: validateConfirmPassword,
-              onSaved: (String val) {
-                _confirmPassword = val;
-              }),
           new SizedBox(height: height * 0.01),
           Text(
             errorString,

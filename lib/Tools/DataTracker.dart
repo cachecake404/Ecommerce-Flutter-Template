@@ -16,9 +16,9 @@ class DataTracker with ChangeNotifier {
     notifyListeners();
   }
 
-  Widget loadingWidget(Widget mainWidget) {
+  Widget loadingWidget(bool giveEmpty, Widget mainWidget) {
     if (_isLoading) {
-      return (CircularProgressIndicator());
+      return (giveEmpty ? Container() : CircularProgressIndicator());
     } else {
       return mainWidget;
     }
@@ -38,6 +38,7 @@ class DataTracker with ChangeNotifier {
       _allCards.add(cards);
     }
   }
+
   // Track Orders
   List<ShopItem> _shopItems = new List<ShopItem>();
   List<ShopItem> get shopItems => _shopItems;
@@ -54,22 +55,26 @@ class DataTracker with ChangeNotifier {
   //Tracking authenthication variable for user
   Auth _auth = new Auth();
   Auth get auth => _auth;
+  // Checker for getting additional details
+  bool _needData = true;
+  bool get needData => _needData;
   // Auto set data on changes.
-  void autoSetData() async {
+  Future<void> autoSetData() async {
     _user = await _auth.getCurrentUser();
     UserDataManager umanager = new UserDataManager(_user);
     Map<String, dynamic> userNestedDetails = await umanager.getData();
-
-    for (String i in userNestedDetails.keys) {
-      _customDataKey = i;
+    if (userNestedDetails != null) {
+      for (String i in userNestedDetails.keys) {
+        _customDataKey = i;
+      }
+      _customData = userNestedDetails[_customDataKey];
+      _needData = false;
     }
-    _customData = userNestedDetails[_customDataKey];
   }
 
   // Call when auth is set
   set auth(Auth a) {
     _auth = a;
-    autoSetData();
     notifyListeners();
   }
 }

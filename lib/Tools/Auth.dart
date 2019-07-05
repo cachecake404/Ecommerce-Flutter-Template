@@ -1,18 +1,34 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 //Tempelate for Auth
 
-abstract class BaseAuth {
-  Future<String> signIn(String email, String password);
-  Future<String> signUp(String email, String password);
-  Future<FirebaseUser> getCurrentUser();
-  Future<void> signOut();
-}
+// abstract class BaseAuth {
+//   Future<String> signIn(String email, String password);
+//   Future<String> signUp(String email, String password);
+//   Future<FirebaseUser> getCurrentUser();
+//   Future<void> signOut();
+// }
 
 // Class with methods for authenthication with firebase.
-class Auth implements BaseAuth {
+class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  Future<String> signInWithGoogle() async {
+    String message = "";
+    try {
+      GoogleSignIn googleSignInObj = new GoogleSignIn();
+      GoogleSignInAccount googleAcc = await googleSignInObj.signIn();
+      GoogleSignInAuthentication googleAuth = await googleAcc.authentication;
+      final AuthCredential creds = GoogleAuthProvider.getCredential(
+          accessToken: googleAuth.accessToken, idToken: googleAuth.idToken); 
+      await _firebaseAuth.signInWithCredential(creds);
+    } catch (e) {
+      message = e.toString();
+    }
+    return message;
+  }
 
   Future<String> signIn(String email, String password) async {
     String message = "";

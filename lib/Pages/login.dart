@@ -29,6 +29,7 @@ class _LoginState extends State<Login> {
       Auth authObj = new Auth();
       String message = await authObj.signIn(_username.trim(), _password);
       Provider.of<DataTracker>(context).auth = authObj;
+      Provider.of<DataTracker>(context).autoSetData();
       Provider.of<DataTracker>(context).isLoading = false;
       if (message == "") {
         Navigator.pushReplacementNamed(context, '/shop');
@@ -42,6 +43,26 @@ class _LoginState extends State<Login> {
       setState(() {
         _validate = true;
       });
+    }
+  }
+
+  void onGoogleSignInClick(BuildContext context) async {
+    Provider.of<DataTracker>(context).isLoading = true;
+    Auth authObj = new Auth();
+    try {
+      String message = await authObj.signInWithGoogle();
+      Provider.of<DataTracker>(context).auth = authObj;
+      await Provider.of<DataTracker>(context).autoSetData();
+      Provider.of<DataTracker>(context).isLoading = false;
+      if (Provider.of<DataTracker>(context).needData) {
+        Navigator.pushReplacementNamed(context, '/SignUpPartial');
+      } else {
+        Navigator.pushReplacementNamed(context, '/shop');
+      }
+      print("GOOGLE SIGN IN");
+      print(message);
+    } catch (e) {
+          Provider.of<DataTracker>(context).isLoading = false;
     }
   }
 
@@ -121,16 +142,24 @@ class _LoginState extends State<Login> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Spacer(),
-              IconButton(
-                iconSize: 45,
-                icon: Image.asset("lib/Assets/facebook_icon.png"),
-                onPressed: () {},
+              Provider.of<DataTracker>(context).loadingWidget(
+                true,
+                IconButton(
+                  iconSize: 45,
+                  icon: Image.asset("lib/Assets/facebook_icon.png"),
+                  onPressed: () {},
+                ),
               ),
               Spacer(),
-              IconButton(
-                iconSize: 45,
-                icon: Image.asset("lib/Assets/google_icon.png"),
-                onPressed: () {},
+              Provider.of<DataTracker>(context).loadingWidget(
+                true,
+                IconButton(
+                  iconSize: 45,
+                  icon: Image.asset("lib/Assets/google_icon.png"),
+                  onPressed: () {
+                    onGoogleSignInClick(context);
+                  },
+                ),
               ),
               Spacer(),
               Spacer(),
@@ -138,6 +167,7 @@ class _LoginState extends State<Login> {
                   minWidth: width * 0.48,
                   height: height * 0.08,
                   child: Provider.of<DataTracker>(context).loadingWidget(
+                    false,
                     RaisedButton(
                       onPressed: () {
                         onSignInClick(context);

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import "../Widgets/OrderCardHolder.dart";
 import "package:provider/provider.dart";
 import "../Tools/DataTracker.dart";
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 
 class Cart extends StatefulWidget {
   Cart({Key key}) : super(key: key);
@@ -15,13 +17,26 @@ class _CartState extends State<Cart> {
   Color orderCardsContainer = Colors.grey[200];
   Color priceInfoColor = Colors.deepPurple[50];
   Color checkOutColor = Colors.deepPurple;
+  Color timePickColor = Colors.white;
   // Create Widget To Hold Price Info
   Widget priceContainer;
-
+  // Widget to Store Delivery Time
+  DateTime deliveryTime = DateTime.now();
   void renderPrice(BuildContext context) {
     setState(() {
       priceContainer = genPrice(context);
     });
+  }
+
+  String clockText() {
+    if(deliveryTime == DateTime.now())
+    {
+      return "Now";
+    }
+    else
+    {
+      return DateFormat("MM-dd-yyyy\nhh:mm a").format(deliveryTime);
+    }
   }
 
   Widget genPrice(BuildContext context) {
@@ -73,6 +88,18 @@ class _CartState extends State<Cart> {
     );
   }
 
+  void setTime() {
+    DatePicker.showDateTimePicker(context, showTitleActions: true,
+        onConfirm: (date) {
+      if (DateTime.now().compareTo(date) > 0) {
+        date = DateTime.now();
+      }
+      setState(() {
+       deliveryTime = date; 
+      });
+    }, currentTime: DateTime.now(), locale: LocaleType.en);
+  }
+
   Widget cartItemsGen(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     if (Provider.of<DataTracker>(context).shopItems.length == 0) {
@@ -82,7 +109,10 @@ class _CartState extends State<Cart> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[Icon(Icons.shopping_cart),Text("  Cart Empty  ")],
+              children: <Widget>[
+                Icon(Icons.shopping_cart),
+                Text("  Cart Empty  ")
+              ],
             )
           ],
         ),
@@ -96,9 +126,30 @@ class _CartState extends State<Cart> {
             color: orderCardsContainer,
           ),
           Container(
-            height: height * 0.32,
+            height: height * 0.22,
           ),
           priceContainer,
+          Container(
+            height: height * 0.08,
+            child: GestureDetector(
+              onTap: () {
+                setTime();
+              },
+              child: Card(
+                color: timePickColor,
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.timer,
+                      color: Colors.black,
+                    ),
+                    Spacer(),
+                    Text(clockText()),
+                  ],
+                ),
+              ),
+            ),
+          ),
           Container(
             height: height * 0.08,
             child: GestureDetector(

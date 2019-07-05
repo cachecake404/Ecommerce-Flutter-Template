@@ -5,7 +5,7 @@ import "../Tools/DataTracker.dart";
 
 class OrderCardHolder extends StatefulWidget {
   final Function priceRedo;
-  OrderCardHolder(BuildContext context,Function priceDo): priceRedo = priceDo;
+  OrderCardHolder(BuildContext context, Function priceDo) : priceRedo = priceDo;
   @override
   _OrderCardHolderState createState() => _OrderCardHolderState();
 }
@@ -15,11 +15,10 @@ class _OrderCardHolderState extends State<OrderCardHolder> {
   void removeItem(BuildContext context, ShopItem shopItem) {
     Provider.of<DataTracker>(context).shopItems.remove(shopItem);
     setState(() {
-     cards = genCards(context);
+      cards = genCards(context);
     });
     widget.priceRedo(context);
   }
-
 
   //      priceRedo(); call setState get from init state
   List<Card> genCards(BuildContext context) {
