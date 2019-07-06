@@ -68,6 +68,7 @@ class ShopState extends State<Shop> {
   // Build Widget
   @override
   Widget build(BuildContext context) {
+    Provider.of<DataTracker>(context).needData = true;
     return Scaffold(
       backgroundColor: backgroundColorScaffold,
       drawer: Drawer(

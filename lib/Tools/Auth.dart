@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import "package:flutter_facebook_login/flutter_facebook_login.dart";
 //Tempelate for Auth
 
 // abstract class BaseAuth {
@@ -22,8 +22,30 @@ class Auth {
       GoogleSignInAccount googleAcc = await googleSignInObj.signIn();
       GoogleSignInAuthentication googleAuth = await googleAcc.authentication;
       final AuthCredential creds = GoogleAuthProvider.getCredential(
-          accessToken: googleAuth.accessToken, idToken: googleAuth.idToken); 
+          accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
       await _firebaseAuth.signInWithCredential(creds);
+    } catch (e) {
+      message = e.toString();
+    }
+    return message;
+  }
+
+  Future<String> signInWithFacebook() async {
+    String message = "failed";
+    try {
+      FacebookLogin facebookSignInObj = new FacebookLogin();
+      FacebookLoginResult fbResult =
+          await facebookSignInObj.logInWithReadPermissions(["email"]);
+      if (fbResult.status == FacebookLoginStatus.loggedIn) {
+        print("LOGGED IN");
+        final AuthCredential creds = FacebookAuthProvider.getCredential(
+            accessToken: fbResult.accessToken.token);
+        await _firebaseAuth.signInWithCredential(creds);
+        message = "";
+      } else {
+        print(fbResult.errorMessage);
+        return "Failed with facebook status: " + fbResult.status.toString();
+      }
     } catch (e) {
       message = e.toString();
     }

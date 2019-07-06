@@ -58,11 +58,18 @@ class DataTracker with ChangeNotifier {
   // Checker for getting additional details
   bool _needData = true;
   bool get needData => _needData;
+  set needData(bool value) {
+    _needData = value;
+    notifyListeners();
+  }
+
   // Auto set data on changes.
   Future<void> autoSetData() async {
     _user = await _auth.getCurrentUser();
     UserDataManager umanager = new UserDataManager(_user);
     Map<String, dynamic> userNestedDetails = await umanager.getData();
+    print("THE USER DATA HERE IS ");
+    print(userNestedDetails);
     if (userNestedDetails != null) {
       for (String i in userNestedDetails.keys) {
         _customDataKey = i;

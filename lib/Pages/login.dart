@@ -59,10 +59,37 @@ class _LoginState extends State<Login> {
       } else {
         Navigator.pushReplacementNamed(context, '/shop');
       }
-      print("GOOGLE SIGN IN");
       print(message);
     } catch (e) {
-          Provider.of<DataTracker>(context).isLoading = false;
+      Provider.of<DataTracker>(context).isLoading = false;
+    }
+  }
+
+  void onFacebookSignInClick(BuildContext context) async {
+    Provider.of<DataTracker>(context).isLoading = true;
+    Auth authObj = new Auth();
+    try {
+      String message = await authObj.signInWithFacebook();
+      Provider.of<DataTracker>(context).auth = authObj;
+      await Provider.of<DataTracker>(context).autoSetData();
+      Provider.of<DataTracker>(context).isLoading = false;
+      if (Provider.of<DataTracker>(context).needData) {
+        Navigator.pushReplacementNamed(context, '/SignUpPartial');
+      } else {
+        if(message=="")
+        {
+          Navigator.pushReplacementNamed(context, '/shop');
+        }
+        else{
+          setState(() {
+           validationText = message; 
+          });
+        }
+        
+      }
+      print(message);
+    } catch (e) {
+      Provider.of<DataTracker>(context).isLoading = false;
     }
   }
 
@@ -147,7 +174,9 @@ class _LoginState extends State<Login> {
                 IconButton(
                   iconSize: 45,
                   icon: Image.asset("lib/Assets/facebook_icon.png"),
-                  onPressed: () {},
+                  onPressed: () {
+                    onFacebookSignInClick(context);
+                  },
                 ),
               ),
               Spacer(),
