@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:hookah1/Tools/DataTracker.dart';
-import "../Tools/Auth.dart";
+import "../../Tools/Auth.dart";
 import "package:provider/provider.dart";
-import "../Tools/TextValidator.dart";
-import "../Tools/UserDataManager.dart";
+import "../../Tools/TextValidator.dart";
+import "../../Tools/UserDataManager.dart";
 
 class SignUpPartial extends StatefulWidget {
   State<StatefulWidget> createState() {
-    return _SignUpState();
+    return _SignUpPartialState();
   }
 }
 
-class _SignUpState extends State<SignUpPartial> {
+class _SignUpPartialState extends State<SignUpPartial> {
   //Variable for the form to function
   GlobalKey<FormState> _key = new GlobalKey();
   TextEditingController pEdit = new TextEditingController();

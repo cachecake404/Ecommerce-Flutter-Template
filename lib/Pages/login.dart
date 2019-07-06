@@ -32,7 +32,8 @@ class _LoginState extends State<Login> {
       Provider.of<DataTracker>(context).autoSetData();
       Provider.of<DataTracker>(context).isLoading = false;
       if (message == "") {
-        Navigator.pushReplacementNamed(context, '/shop');
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              '/shop', (Route<dynamic> route) => false);
       } else {
         setState(() {
           validationText = message;
@@ -57,7 +58,8 @@ class _LoginState extends State<Login> {
       if (Provider.of<DataTracker>(context).needData) {
         Navigator.pushReplacementNamed(context, '/SignUpPartial');
       } else {
-        Navigator.pushReplacementNamed(context, '/shop');
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              '/shop', (Route<dynamic> route) => false);
       }
       print(message);
     } catch (e) {
@@ -76,16 +78,15 @@ class _LoginState extends State<Login> {
       if (Provider.of<DataTracker>(context).needData) {
         Navigator.pushReplacementNamed(context, '/SignUpPartial');
       } else {
-        if(message=="")
-        {
-          Navigator.pushReplacementNamed(context, '/shop');
-        }
-        else{
+        if (message == "") {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              '/shop', (Route<dynamic> route) => false);
+          //Navigator.pushReplacementNamed(context, '/shop');
+        } else {
           setState(() {
-           validationText = message; 
+            validationText = message;
           });
         }
-        
       }
       print(message);
     } catch (e) {
@@ -213,6 +214,40 @@ class _LoginState extends State<Login> {
                           borderRadius: new BorderRadius.circular(40.0)),
                     ),
                   )),
+            ],
+          ),
+          Text(""),
+          Row(
+            children: <Widget>[
+              Text("     "),
+              Provider.of<DataTracker>(context).loadingWidget(
+                true,
+                GestureDetector(
+                  child: Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/ResetPass');
+                  },
+                ),
+              ),
+              Spacer(),
+              Provider.of<DataTracker>(context).loadingWidget(
+                true,
+                GestureDetector(
+                  child: Text(
+                    "Register",
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, '/signup');
+                  },
+                ),
+              ),
+              Text("     ")
             ],
           )
         ],

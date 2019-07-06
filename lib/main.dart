@@ -5,9 +5,10 @@ import 'Pages/login.dart';
 import 'Pages/prelogin.dart';
 import 'package:provider/provider.dart';
 import 'Tools/DataTracker.dart';
-import "Pages/splash.dart";
+import "Pages/HelperPages/splash.dart";
 import "Pages/cart.dart";
-import "Pages/signupPartial.dart";
+import "Pages/HelperPages/signupPartial.dart";
+import "Pages/HelperPages/resetPassword.dart";
 
 void main() => runApp(MyApp());
 
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
             '/prelogin': (context) => Prelogin(),
             '/cart': (context) => Cart(),
             '/SignUpPartial': (context) => SignUpPartial(),
+            '/ResetPass': (context) => ResetPass(),
           },
           title: "Hookah Express",
           theme: ThemeData(
