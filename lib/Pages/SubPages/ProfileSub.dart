@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import "package:provider/provider.dart";
 import "../../Tools/DataTracker.dart";
 import 'package:firebase_auth/firebase_auth.dart';
+import "ProfileHelperPages/AccountDetails.dart";
 
 class ProfileSub extends StatefulWidget {
   @override
@@ -34,11 +35,47 @@ class _ProfileSubState extends State<ProfileSub> {
 
   @override
   Widget build(BuildContext context) {
-    if (initalGet == false) {
-      getUserDetails(context);
-      initalGet = true;
-    }
+    //used to get height and width of current screen
+    //double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
 
-    return Text(details);
+    return ListView(
+      children: <Widget>[
+        Container(
+          height: height * 0.05,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AccountDetails(),
+                ),
+              );
+            },
+            child: Card(
+              child: Text("Account Details"),
+            ),
+          ),
+        ),
+        Container(
+          height: height * 0.01,
+        ),
+        Container(
+          height: height * 0.05,
+          child: Card(
+            child: Text("Reset Password"),
+          ),
+        ),
+        Container(
+          height: height * 0.01,
+        ),
+        Container(
+          height: height * 0.05,
+          child: Card(
+            child: Text("Support"),
+          ),
+        ),
+      ],
+    );
   }
 }

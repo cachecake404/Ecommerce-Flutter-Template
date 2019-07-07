@@ -51,7 +51,9 @@ class _SignUpState extends State<SignUp> {
       await Provider.of<DataTracker>(context).autoSetData();
       Provider.of<DataTracker>(context).isLoading = false;
       //Change screen
-      Navigator.pushReplacementNamed(context, '/shop');
+      Provider.of<DataTracker>(context).needData = true;
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/shop', (Route<dynamic> route) => false);
     } else {
       Provider.of<DataTracker>(context).isLoading = false;
       setState(() {
@@ -275,7 +277,8 @@ class _SignUpState extends State<SignUp> {
           new ButtonTheme(
               minWidth: width * 0.49,
               height: height * 0.10,
-              child: Provider.of<DataTracker>(context).loadingWidget(false,
+              child: Provider.of<DataTracker>(context).loadingWidget(
+                false,
                 new RaisedButton(
                   onPressed: () {
                     onSignUpClick(context);

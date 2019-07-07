@@ -32,8 +32,9 @@ class _LoginState extends State<Login> {
       Provider.of<DataTracker>(context).autoSetData();
       Provider.of<DataTracker>(context).isLoading = false;
       if (message == "") {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              '/shop', (Route<dynamic> route) => false);
+        Provider.of<DataTracker>(context).needData = true;
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/shop', (Route<dynamic> route) => false);
       } else {
         setState(() {
           validationText = message;
@@ -58,8 +59,9 @@ class _LoginState extends State<Login> {
       if (Provider.of<DataTracker>(context).needData) {
         Navigator.pushReplacementNamed(context, '/SignUpPartial');
       } else {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              '/shop', (Route<dynamic> route) => false);
+        Provider.of<DataTracker>(context).needData = true;
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/shop', (Route<dynamic> route) => false);
       }
       print(message);
     } catch (e) {
@@ -79,6 +81,7 @@ class _LoginState extends State<Login> {
         Navigator.pushReplacementNamed(context, '/SignUpPartial');
       } else {
         if (message == "") {
+          Provider.of<DataTracker>(context).needData = true;
           Navigator.of(context).pushNamedAndRemoveUntil(
               '/shop', (Route<dynamic> route) => false);
           //Navigator.pushReplacementNamed(context, '/shop');

@@ -7,8 +7,6 @@ import "package:provider/provider.dart";
 import "../Widgets/Searcher.dart";
 import "../Widgets/ShopCard.dart";
 
-//import 'package:flutter/painting.dart';
-
 class Shop extends StatefulWidget {
   State<StatefulWidget> createState() {
     return ShopState();
@@ -68,7 +66,6 @@ class ShopState extends State<Shop> {
   // Build Widget
   @override
   Widget build(BuildContext context) {
-    Provider.of<DataTracker>(context).needData = true;
     return Scaffold(
       backgroundColor: backgroundColorScaffold,
       drawer: Drawer(
@@ -78,7 +75,7 @@ class ShopState extends State<Shop> {
               padding: const EdgeInsets.only(top: 30, bottom: 10, left: 20),
               child: Row(children: [
                 Text(
-                  "OPTIONS",
+                  "Options ",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
@@ -90,8 +87,8 @@ class ShopState extends State<Shop> {
             ),
             Card(
               child: ListTile(
-                leading: Icon(Icons.image),
-                title: Text('Gallery'),
+                leading: Icon(Icons.exit_to_app),
+                title: Text('Sign Out'),
                 //trailing: Icon(Icons.more_vert),
               ),
             ),

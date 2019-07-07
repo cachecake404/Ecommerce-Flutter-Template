@@ -21,7 +21,7 @@ class _SignUpPartialState extends State<SignUpPartial> {
 
   String _fname, _lname, _phoneNumber, _address;
   String errorString = "";
-  
+
   // Set the Users Details in Database;
   void setUser(BuildContext context) async {
     Auth authHandler = new Auth();
@@ -42,7 +42,9 @@ class _SignUpPartialState extends State<SignUpPartial> {
     await Provider.of<DataTracker>(context).autoSetData();
     Provider.of<DataTracker>(context).isLoading = false;
     //Change screen
-    Navigator.pushReplacementNamed(context, '/shop');
+    Provider.of<DataTracker>(context).needData = true;
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/shop', (Route<dynamic> route) => false);
   }
 
   // Function for picking date
@@ -226,7 +228,8 @@ class _SignUpPartialState extends State<SignUpPartial> {
           new ButtonTheme(
               minWidth: width * 0.49,
               height: height * 0.10,
-              child: Provider.of<DataTracker>(context).loadingWidget(false,
+              child: Provider.of<DataTracker>(context).loadingWidget(
+                false,
                 new RaisedButton(
                   onPressed: () {
                     onSignUpClick(context);
