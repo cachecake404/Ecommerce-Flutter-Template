@@ -35,6 +35,12 @@ class ShopState extends State<Shop> {
     return cardsMap;
   }
 
+  void signOff(BuildContext context) {
+    Provider.of<DataTracker>(context).auth.signOut();
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/prelogin', (Route<dynamic> route) => false);
+  }
+
 //Variables for Bottom Bar
   int _selectedIndex = 0;
   static const MaterialColor bottomBarColor = bottomBar;
@@ -89,7 +95,7 @@ class ShopState extends State<Shop> {
               child: ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Sign Out'),
-                //trailing: Icon(Icons.more_vert),
+                onTap: () {signOff(context);},
               ),
             ),
           ],

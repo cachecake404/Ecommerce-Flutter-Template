@@ -11,8 +11,51 @@ class ProfileSub extends StatefulWidget {
 
 class _ProfileSubState extends State<ProfileSub> {
   String details = "Hello";
-
   bool initalGet = false;
+  Future<void> _ackAlertPassReset(BuildContext context) async {
+    DataTracker dataManager = Provider.of<DataTracker>(context);
+    FirebaseUser emailUser = await dataManager.auth.getCurrentUser();
+    dataManager.auth.resetPassword(emailUser.email);
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Password Reset'),
+          content: Text(
+              'An email has been sent to: \n${emailUser.email}\nFollow the link to change password.'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _ackAlertSupport(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Support'),
+          content: Text('Please Contact: 666-666-6666'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void getUserDetails(BuildContext context) async {
     DataTracker dataManager = Provider.of<DataTracker>(context);
     FirebaseUser us = dataManager.user;
@@ -62,8 +105,13 @@ class _ProfileSubState extends State<ProfileSub> {
         ),
         Container(
           height: height * 0.05,
-          child: Card(
-            child: Text("Reset Password"),
+          child: GestureDetector(
+            onTap: () {
+              _ackAlertPassReset(context);
+            },
+            child: Card(
+              child: Text("Reset Password"),
+            ),
           ),
         ),
         Container(
@@ -71,8 +119,13 @@ class _ProfileSubState extends State<ProfileSub> {
         ),
         Container(
           height: height * 0.05,
-          child: Card(
-            child: Text("Support"),
+          child: GestureDetector(
+            onTap: () {
+              _ackAlertSupport(context);
+            },
+            child: Card(
+              child: Text("Support"),
+            ),
           ),
         ),
       ],

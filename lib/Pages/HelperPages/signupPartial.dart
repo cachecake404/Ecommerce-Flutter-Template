@@ -54,7 +54,7 @@ class _SignUpPartialState extends State<SignUpPartial> {
       context: context,
       initialDate: timeNow,
       firstDate: DateTime(1900),
-      lastDate: DateTime(2050),
+      lastDate: DateTime(2100),
     );
     if (picked != null && picked != timeNow) {
       setState(() {
