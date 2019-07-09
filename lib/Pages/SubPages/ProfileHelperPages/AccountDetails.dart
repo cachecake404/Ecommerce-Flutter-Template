@@ -33,7 +33,7 @@ class _AccountDetailsState extends State<AccountDetails> {
   }
 
   // Sample Function To Update Data
-  void updateSample(BuildContext context) {
+  void updateSample(BuildContext context) async {
     // Get current data to change and update
     DataTracker dataManager = Provider.of<DataTracker>(context);
     UserDataManager userHandler = new UserDataManager(dataManager.user);
@@ -45,7 +45,7 @@ class _AccountDetailsState extends State<AccountDetails> {
     updatedData["address"] = address;
     updatedData["age"] = age;
     // Submit the update
-    userHandler.updateData(updatedData, dataManager.customDataKey);
+    await userHandler.updateData(updatedData);
     dataManager.autoSetData();
   }
 

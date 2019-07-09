@@ -40,15 +40,19 @@ class _SignUpState extends State<SignUp> {
       FirebaseUser user = await authHandler.getCurrentUser();
       UserDataManager umanager = new UserDataManager(user);
       int ageDays = (DateTime.now().difference(timeNow).inDays);
-      await umanager.postData({
+      Map<String, dynamic> tempData = {
         "first_name": _fname,
         "last_name": _lname,
-        "age": ageDays ~/ 365,
+        "age": (ageDays ~/ 365),
         "phone": _phoneNumber,
         "address": _address
-      });
+      };
+      await umanager.postData(tempData);
+      print("I AM FINE");
       dataTracker.auth = authHandler;
+      print("I AM FINE");
       await Provider.of<DataTracker>(context).autoSetData();
+      print("I AM FINE");
       Provider.of<DataTracker>(context).isLoading = false;
       //Change screen
       Provider.of<DataTracker>(context).needData = true;

@@ -38,11 +38,16 @@ class _SignUpPartialState extends State<SignUpPartial> {
       "phone": _phoneNumber,
       "address": _address
     });
+    print("DONE POSTING DATA");
     dataTracker.auth = authHandler;
+    print("DONE SETTING AUTH");
     await Provider.of<DataTracker>(context).autoSetData();
+    print("DONE SETTING AUTO DATA");
     Provider.of<DataTracker>(context).isLoading = false;
+    print("DONE CHANGING LOAD STATUS");
     //Change screen
     Provider.of<DataTracker>(context).needData = true;
+    print("DONE SETTING NEED DATA");
     Navigator.of(context)
         .pushNamedAndRemoveUntil('/shop', (Route<dynamic> route) => false);
   }
