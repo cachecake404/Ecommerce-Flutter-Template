@@ -4,6 +4,8 @@ import "package:provider/provider.dart";
 import "../Tools/DataTracker.dart";
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import "../Tools/StripeManager.dart";
+import 'package:stripe_payment/stripe_payment.dart';
 
 class Cart extends StatefulWidget {
   Cart({Key key}) : super(key: key);
@@ -28,13 +30,18 @@ class _CartState extends State<Cart> {
     });
   }
 
+  void manageCheckout() {
+    StripeSource.setPublishableKey(
+        "pk_test_NhFl8ur8dyhyzAwlyeLkcnwj00MahF9SdK");
+    StripeSource.addSource().then((token) {
+      StripeManager.addCard(token);
+    });
+  }
+
   String clockText() {
-    if(deliveryTime == DateTime.now())
-    {
+    if (deliveryTime == DateTime.now()) {
       return "Now";
-    }
-    else
-    {
+    } else {
       return DateFormat("MM-dd-yyyy\nhh:mm a").format(deliveryTime);
     }
   }
@@ -95,7 +102,7 @@ class _CartState extends State<Cart> {
         date = DateTime.now();
       }
       setState(() {
-       deliveryTime = date; 
+        deliveryTime = date;
       });
     }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
@@ -150,9 +157,12 @@ class _CartState extends State<Cart> {
               ),
             ),
           ),
-          Container(
-            height: height * 0.08,
-            child: GestureDetector(
+          GestureDetector(
+            onTap: () {
+              manageCheckout();
+            },
+            child: Container(
+              height: height * 0.08,
               child: Card(
                 color: checkOutColor,
                 child: Row(
