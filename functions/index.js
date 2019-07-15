@@ -46,3 +46,40 @@ exports.addPaymentCourse = functions.firestore
       .doc(customerSource.card.fingerprint)
       .set(customerSource, { merge: true });
   });
+
+exports.createStripeCharge = functions.firestore
+  .document("cards/{userId}/charges/{chargeId}")
+  .onCreate(async (change, context) => {
+    try {
+      //get the customer..to talk with Stripe...
+      const snapshot = await firestore
+        .collection("cards")
+        .doc(context.params.userId)
+        .get();
+      const customer = snapshot.data()["custId"];
+      const snapshotCharge = await firestore
+        .collection("cards")
+        .doc(context.params.userId)
+        .collection("charges")
+        .doc(context.params.chargeId)
+        .get();
+      const amount = change.data()["amount"];
+      const currency = change.data()["currency"];
+      const description = change.data()["description"];
+
+      const charge = { amount, currency, customer, description };
+      const idempotentKey = context.params.chargeId;
+
+      const response = await stripe.charges.create(charge, {
+        idempotency_key: idempotentKey
+      });
+      return change.ref.set(response, { merge: true });
+    } catch (error) {
+      console.error(error);
+      await change.ref.set(
+        { error: userFacingMessage(error) },
+        { merge: true }
+      );
+      return null;
+    }
+  });

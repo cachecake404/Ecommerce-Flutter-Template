@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import "package:flutter_facebook_login/flutter_facebook_login.dart";
+import 'package:cloud_firestore/cloud_firestore.dart';
 //Tempelate for Auth
 
 // abstract class BaseAuth {
@@ -23,7 +24,8 @@ class Auth {
       GoogleSignInAuthentication googleAuth = await googleAcc.authentication;
       final AuthCredential creds = GoogleAuthProvider.getCredential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-      await _firebaseAuth.signInWithCredential(creds);
+      FirebaseUser user = await _firebaseAuth.signInWithCredential(creds);
+      setFireData(user);
     } catch (e) {
       message = e.toString();
     }
@@ -37,10 +39,10 @@ class Auth {
       FacebookLoginResult fbResult =
           await facebookSignInObj.logInWithReadPermissions(["email"]);
       if (fbResult.status == FacebookLoginStatus.loggedIn) {
-        print("LOGGED IN");
         final AuthCredential creds = FacebookAuthProvider.getCredential(
             accessToken: fbResult.accessToken.token);
-        await _firebaseAuth.signInWithCredential(creds);
+        FirebaseUser user = await _firebaseAuth.signInWithCredential(creds);
+        setFireData(user);
         message = "";
       } else {
         print(fbResult.errorMessage);
@@ -64,11 +66,12 @@ class Auth {
 
   Future<String> signUp(String email, String password) async {
     String message = "";
-    await _firebaseAuth
+    FirebaseUser user = await _firebaseAuth
         .createUserWithEmailAndPassword(email: email, password: password)
         .catchError((e) {
       message = e.message;
     });
+    setFireData(user);
 
     return message;
   }
@@ -84,14 +87,22 @@ class Auth {
 
   Future<String> resetPassword(String email) async {
     String message = "";
-    try
-    {
+    try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
-    }
-    catch(e)
-    {
+    } catch (e) {
       message = e.toString();
-    }    
+    }
     return message;
+  }
+
+  void setFireData(FirebaseUser user) async {
+    DocumentSnapshot dataShot =
+        await Firestore.instance.collection("cards").document(user.uid).get();
+    if (dataShot.data == null) {
+      Firestore.instance
+          .collection("cards")
+          .document(user.uid)
+          .setData({"custId": "new", "email": user.email});
+    }
   }
 }

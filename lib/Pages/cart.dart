@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import "../Widgets/OrderCardHolder.dart";
 import "package:provider/provider.dart";
@@ -22,6 +24,9 @@ class _CartState extends State<Cart> {
   Color timePickColor = Colors.white;
   // Create Widget To Hold Price Info
   Widget priceContainer;
+  double itemPriceTotal;
+  double taxRate;
+  String checkOutText = "Checkout";
   // Widget to Store Delivery Time
   DateTime deliveryTime = DateTime.now();
   void renderPrice(BuildContext context) {
@@ -30,12 +35,27 @@ class _CartState extends State<Cart> {
     });
   }
 
-  void manageCheckout() {
-    StripeSource.setPublishableKey(
-        "pk_test_NhFl8ur8dyhyzAwlyeLkcnwj00MahF9SdK");
-    StripeSource.addSource().then((token) {
-      StripeManager.addCard(token);
-    });
+  void manageCheckout(BuildContext context) async {
+    Provider.of<DataTracker>(context).isLoading = true;
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    DocumentSnapshot dataTemp =
+        await Firestore.instance.collection("cards").document(user.uid).get();
+    String custID = dataTemp.data["custId"];
+    if (custID == "new") {
+      StripeSource.setPublishableKey(
+          "pk_test_NhFl8ur8dyhyzAwlyeLkcnwj00MahF9SdK");
+      await StripeSource.addSource().then((token) {
+        StripeManager.addCard(user.uid, token);
+        setState(() {
+          checkOutText = "Proceed";
+        });
+      });
+    } else {
+      double totalPrice = (itemPriceTotal + taxRate);
+      StripeManager.chargeCustomer(user.uid, custID, totalPrice);
+    }
+
+    Provider.of<DataTracker>(context).isLoading = false;
   }
 
   String clockText() {
@@ -47,11 +67,11 @@ class _CartState extends State<Cart> {
   }
 
   Widget genPrice(BuildContext context) {
-    double itemPriceTotal = 0;
+    itemPriceTotal = 0;
     for (var i in Provider.of<DataTracker>(context).shopItems) {
       itemPriceTotal += (i.price);
     }
-    double taxRate = itemPriceTotal * 0.0625;
+    taxRate = itemPriceTotal * 0.0625;
     double height = MediaQuery.of(context).size.height;
     return Container(
       height: height * 0.10,
@@ -157,31 +177,33 @@ class _CartState extends State<Cart> {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              manageCheckout();
-            },
-            child: Container(
-              height: height * 0.08,
-              child: Card(
-                color: checkOutColor,
-                child: Row(
-                  children: <Widget>[
-                    Spacer(),
-                    Text(
-                      "Checkout",
-                      style: TextStyle(color: Colors.white),
+          Provider.of<DataTracker>(context).loadingWidget(
+              false,
+              GestureDetector(
+                onTap: () {
+                  manageCheckout(context);
+                },
+                child: Container(
+                  height: height * 0.08,
+                  child: Card(
+                    color: checkOutColor,
+                    child: Row(
+                      children: <Widget>[
+                        Spacer(),
+                        Text(
+                          checkOutText,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.shopping_cart,
+                          color: Colors.white,
+                        )
+                      ],
                     ),
-                    Spacer(),
-                    Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white,
-                    )
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
+              )),
         ],
       );
     }
