@@ -24,6 +24,11 @@ class _CartState extends State<Cart> {
   Color timePickColor = Colors.white;
   // Create Widget To Hold Price Info
   Widget priceContainer;
+  Widget cardContainer = new Card(
+    child: Center(
+      child: Text("Loading"),
+    ),
+  );
   double itemPriceTotal;
   double taxRate;
   String checkOutText = "Checkout";
@@ -50,11 +55,74 @@ class _CartState extends State<Cart> {
           checkOutText = "Proceed";
         });
       });
-    } else {
-      double totalPrice = (itemPriceTotal + taxRate);
-      StripeManager.chargeCustomer(user.uid, custID, totalPrice);
+      await Future.delayed(const Duration(seconds: 2));
     }
 
+    double totalPrice = (itemPriceTotal + taxRate);
+    StripeManager.chargeCustomer(user.uid, custID, totalPrice);
+
+    Provider.of<DataTracker>(context).isLoading = false;
+  }
+
+  Future<void> genCardUI(BuildContext context) async {
+    //Provider.of<DataTracker>(context).isLoading = true;
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    DocumentSnapshot dataTemp =
+        await Firestore.instance.collection("cards").document(user.uid).get();
+    String custID = dataTemp.data["custId"];
+    String finger = dataTemp.data["currentFinger"];
+    if (custID == "new") {
+      setState(() {
+        cardContainer = Card(
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.credit_card),
+              Spacer(),
+              Icon(Icons.add)
+            ],
+          ),
+        );
+      });
+    } else {
+      DocumentSnapshot dataVal = await Firestore.instance
+          .collection("cards")
+          .document(user.uid)
+          .collection("sources")
+          .document(finger)
+          .get();
+      String lastDigits = dataVal.data["card"]["last4"];
+      String brand = dataVal.data["card"]["brand"];
+      setState(() {
+        cardContainer = GestureDetector( onTap: () {manageEditCard(context);},
+          child: Card(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.credit_card),
+                Text(brand),
+                Text("            **** **** **** " + lastDigits),
+                Spacer(),
+                Icon(Icons.edit)
+              ],
+            ),
+          ),
+        );
+      });
+    }
+    //Provider.of<DataTracker>(context).isLoading = false;
+  }
+
+  void manageEditCard(BuildContext context) async {
+    
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    StripeSource.setPublishableKey(
+        "pk_test_NhFl8ur8dyhyzAwlyeLkcnwj00MahF9SdK");
+    await StripeSource.addSource().then((token) {
+      StripeManager.addCard(user.uid, token);
+    });
+    print("HIIIIIII BOIS");
+    Provider.of<DataTracker>(context).isLoading = true;
+    await Future.delayed(const Duration(seconds: 2));
+    await genCardUI(context);
     Provider.of<DataTracker>(context).isLoading = false;
   }
 
@@ -153,7 +221,7 @@ class _CartState extends State<Cart> {
             color: orderCardsContainer,
           ),
           Container(
-            height: height * 0.22,
+            height: height * 0.14,
           ),
           priceContainer,
           Container(
@@ -176,6 +244,10 @@ class _CartState extends State<Cart> {
                 ),
               ),
             ),
+          ),
+          Container(
+            height: height * 0.08,
+            child: cardContainer,
           ),
           Provider.of<DataTracker>(context).loadingWidget(
               false,
@@ -207,6 +279,12 @@ class _CartState extends State<Cart> {
         ],
       );
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    genCardUI(context);
   }
 
   @override

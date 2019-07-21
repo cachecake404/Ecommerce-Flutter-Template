@@ -35,10 +35,12 @@ exports.addPaymentCourse = functions.firestore
         .collection("cards")
         .doc(context.params.userId)
         .update({ custId: customer.id });
+      
     } else {
       customer = await stripe.customers.retrieve(custID);
     }
     const customerSource = customer.sources.data[0];
+    firestore.collection("cards").doc(context.params.userId).set({currentFinger: customerSource.card.fingerprint},{merge:true});
     return firestore
       .collection("cards")
       .doc(context.params.userId)
