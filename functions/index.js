@@ -35,12 +35,14 @@ exports.addPaymentCourse = functions.firestore
         .collection("cards")
         .doc(context.params.userId)
         .update({ custId: customer.id });
-      
     } else {
       customer = await stripe.customers.retrieve(custID);
     }
     const customerSource = customer.sources.data[0];
-    firestore.collection("cards").doc(context.params.userId).set({currentFinger: customerSource.card.fingerprint},{merge:true});
+    firestore
+      .collection("cards")
+      .doc(context.params.userId)
+      .set({ currentFinger: customerSource.card.fingerprint }, { merge: true });
     return firestore
       .collection("cards")
       .doc(context.params.userId)
@@ -78,10 +80,11 @@ exports.createStripeCharge = functions.firestore
       return change.ref.set(response, { merge: true });
     } catch (error) {
       console.error(error);
-      await change.ref.set(
-        { error: userFacingMessage(error) },
-        { merge: true }
-      );
+      await change.ref.set({ error: "Error Occured" }, { merge: true });
+      await firestore
+        .collection("cards")
+        .doc(context.params.userId)
+        .set({ currentCharge: context.params.chargeId }, { merge: true });
       return null;
     }
   });

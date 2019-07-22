@@ -41,7 +41,7 @@ class _CartState extends State<Cart> {
   }
 
   void manageCheckout(BuildContext context) async {
-    Provider.of<DataTracker>(context).isLoading = true;
+    
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot dataTemp =
         await Firestore.instance.collection("cards").document(user.uid).get();
@@ -55,7 +55,9 @@ class _CartState extends State<Cart> {
           checkOutText = "Proceed";
         });
       });
-      await Future.delayed(const Duration(seconds: 2));
+      Provider.of<DataTracker>(context).isLoading = true;
+      await Future.delayed(const Duration(seconds: 3));
+      await genCardUI(context);
     }
 
     double totalPrice = (itemPriceTotal + taxRate);
@@ -119,9 +121,8 @@ class _CartState extends State<Cart> {
     await StripeSource.addSource().then((token) {
       StripeManager.addCard(user.uid, token);
     });
-    print("HIIIIIII BOIS");
     Provider.of<DataTracker>(context).isLoading = true;
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 3));
     await genCardUI(context);
     Provider.of<DataTracker>(context).isLoading = false;
   }
