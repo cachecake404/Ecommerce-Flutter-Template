@@ -77,6 +77,10 @@ exports.createStripeCharge = functions.firestore
       const response = await stripe.charges.create(charge, {
         idempotency_key: idempotentKey
       });
+      await firestore
+      .collection("cards")
+      .doc(context.params.userId)
+      .set({ currentCharge: context.params.chargeId }, { merge: true });
       return change.ref.set(response, { merge: true });
     } catch (error) {
       console.error(error);

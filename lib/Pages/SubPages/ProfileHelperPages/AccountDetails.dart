@@ -3,6 +3,11 @@ import 'package:hookah1/Tools/DataTracker.dart';
 import "package:provider/provider.dart";
 import "../../../Tools/TextValidator.dart";
 import "../../../Tools/UserDataManager.dart";
+import 'package:google_maps_webservice/places.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+
+const kGoogleApiKey = "AIzaSyA5HPBd1px-jPtrCppgZhxawPXZEMEqzEc";
 
 class AccountDetails extends StatefulWidget {
   AccountDetails();
@@ -15,11 +20,54 @@ class _AccountDetailsState extends State<AccountDetails> {
   String fname, lname, phone, address;
   int age;
   bool readOnly = true;
+  bool firstLoad = true;
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;
+  TextEditingController aEdit = new TextEditingController(); // for address
   //Colors
   Color appBarColor = Colors.deepPurple;
   Color changeButtonColor = Colors.red;
+
+  // Alert Function
+  Future<void> _ackAlert(
+      BuildContext context, String title, String text) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(text),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // For map search
+  Future<Null> displayPrediction(Prediction p) async {
+    if (p != null) {
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+      String loc = address[0].addressLine;
+      String zip = address[0].postalCode;
+      List<String> allowedZipCodes = ["75229", "76013"];
+      if (allowedZipCodes.contains(zip.toString())) {
+        aEdit.value =
+            new TextEditingController.fromValue(new TextEditingValue(text: loc))
+                .value;
+      } else {
+        _ackAlert(context, "Unavailable Service",
+            "Sorry, we do not currently support your location. We will expand soon.");
+      }
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -30,6 +78,12 @@ class _AccountDetailsState extends State<AccountDetails> {
     phone = userDetails["phone"];
     address = userDetails["address"];
     age = userDetails["age"];
+    if (firstLoad) {
+      aEdit.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: address))
+          .value;
+      firstLoad = false;
+    }
   }
 
   // Sample Function To Update Data
@@ -181,13 +235,22 @@ class _AccountDetailsState extends State<AccountDetails> {
             Container(
               height: height * 0.10,
               child: Card(
-                child: new TextFormField(
-                  decoration: textDecoration("Enter your address"),
-                  initialValue: address,
-                  validator: TextVaildator.validateString,
-                  onSaved: (String val) {
-                    address = val;
+                child: GestureDetector(
+                  onTap: () async {
+                    Prediction p = await PlacesAutocomplete.show(
+                        context: context, apiKey: kGoogleApiKey);
+                    displayPrediction(p);
                   },
+                  child: AbsorbPointer(
+                    child: new TextFormField(
+                      controller: aEdit,
+                      decoration: textDecoration("Enter your address"),
+                      validator: TextVaildator.validateString,
+                      onSaved: (String val) {
+                        address = val;
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),

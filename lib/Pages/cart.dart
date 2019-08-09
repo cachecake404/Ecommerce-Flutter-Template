@@ -41,7 +41,6 @@ class _CartState extends State<Cart> {
   }
 
   void manageCheckout(BuildContext context) async {
-    
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot dataTemp =
         await Firestore.instance.collection("cards").document(user.uid).get();
@@ -61,8 +60,11 @@ class _CartState extends State<Cart> {
     }
 
     double totalPrice = (itemPriceTotal + taxRate);
+    Provider.of<DataTracker>(context).isLoading = true;
     StripeManager.chargeCustomer(user.uid, custID, totalPrice);
-
+    await Future.delayed(const Duration(seconds: 5));    
+    bool errorCharge = await StripeManager.chargeError(user.uid);
+    print(errorCharge);
     Provider.of<DataTracker>(context).isLoading = false;
   }
 
@@ -95,7 +97,10 @@ class _CartState extends State<Cart> {
       String lastDigits = dataVal.data["card"]["last4"];
       String brand = dataVal.data["card"]["brand"];
       setState(() {
-        cardContainer = GestureDetector( onTap: () {manageEditCard(context);},
+        cardContainer = GestureDetector(
+          onTap: () {
+            manageEditCard(context);
+          },
           child: Card(
             child: Row(
               children: <Widget>[
@@ -114,7 +119,6 @@ class _CartState extends State<Cart> {
   }
 
   void manageEditCard(BuildContext context) async {
-    
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     StripeSource.setPublishableKey(
         "pk_test_NhFl8ur8dyhyzAwlyeLkcnwj00MahF9SdK");
@@ -122,7 +126,7 @@ class _CartState extends State<Cart> {
       StripeManager.addCard(user.uid, token);
     });
     Provider.of<DataTracker>(context).isLoading = true;
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 4));
     await genCardUI(context);
     Provider.of<DataTracker>(context).isLoading = false;
   }

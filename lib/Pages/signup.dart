@@ -7,6 +7,11 @@ import "../Tools/Auth.dart";
 import "package:provider/provider.dart";
 import "../Tools/TextValidator.dart";
 import "../Tools/UserDataManager.dart";
+import 'package:google_maps_webservice/places.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+
+const kGoogleApiKey = "AIzaSyA5HPBd1px-jPtrCppgZhxawPXZEMEqzEc";
 
 class SignUp extends StatefulWidget {
   State<StatefulWidget> createState() {
@@ -17,7 +22,8 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   //Variable for the form to function
   GlobalKey<FormState> _key = new GlobalKey();
-  TextEditingController pEdit = new TextEditingController();
+  TextEditingController pEdit = new TextEditingController(); // for confirm pass
+  TextEditingController aEdit = new TextEditingController(); // for address
 
   String _fname,
       _lname,
@@ -27,6 +33,49 @@ class _SignUpState extends State<SignUp> {
       _password,
       _confirmPassword;
   String errorString = "";
+
+  // Alert Function
+
+  Future<void> _ackAlert(BuildContext context,String title,String text) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(text),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // For map search
+  Future<Null> displayPrediction(Prediction p) async {
+    if (p != null) {
+      var address = await Geocoder.local.findAddressesFromQuery(p.description);
+      String loc = address[0].addressLine;
+      String zip = address[0].postalCode;
+      List<String> allowedZipCodes = ["75229", "76013"];
+      if(allowedZipCodes.contains(zip.toString()))
+      {
+              aEdit.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: loc))
+          .value;
+      }
+      else
+      {
+        _ackAlert(context, "Unavailable Service", "Sorry, we do not currently support your location. We will expand soon.");
+      }
+
+    }
+  }
 
   // Function to set user on signup
 
@@ -48,11 +97,8 @@ class _SignUpState extends State<SignUp> {
         "address": _address
       };
       await umanager.postData(tempData);
-      print("I AM FINE");
       dataTracker.auth = authHandler;
-      print("I AM FINE");
       await Provider.of<DataTracker>(context).autoSetData();
-      print("I AM FINE");
       Provider.of<DataTracker>(context).isLoading = false;
       //Change screen
       Provider.of<DataTracker>(context).needData = true;
@@ -218,21 +264,32 @@ class _SignUpState extends State<SignUp> {
               }),
           new SizedBox(height: height * 0.01),
           new TextFormField(
-              style: new TextStyle(color: inputTextColor),
-              decoration: _formFieldsDecoration('phone'),
-              keyboardType: TextInputType.phone,
-              validator: TextVaildator.validatePhone,
-              onSaved: (String val) {
-                _phoneNumber = val;
-              }),
+            style: new TextStyle(color: inputTextColor),
+            decoration: _formFieldsDecoration('phone'),
+            keyboardType: TextInputType.phone,
+            validator: TextVaildator.validatePhone,
+            onSaved: (String val) {
+              _phoneNumber = val;
+            },
+          ),
           new SizedBox(height: height * 0.01),
-          new TextFormField(
-              style: new TextStyle(color: inputTextColor),
-              decoration: _formFieldsDecoration('Address'),
-              validator: TextVaildator.validateString,
-              onSaved: (String val) {
-                _address = val;
-              }),
+          new GestureDetector(
+            onTap: () async {
+              Prediction p = await PlacesAutocomplete.show(
+                  context: context, apiKey: kGoogleApiKey);
+              displayPrediction(p);
+            },
+            child: AbsorbPointer(
+              child: TextFormField(
+                  controller: aEdit,
+                  style: new TextStyle(color: inputTextColor),
+                  decoration: _formFieldsDecoration('Address'),
+                  validator: TextVaildator.validateString,
+                  onSaved: (String val) {
+                    _address = val;
+                  }),
+            ),
+          ),
           new SizedBox(height: height * 0.03),
           new Row(
             children: <Widget>[

@@ -30,4 +30,13 @@ class StripeManager {
       "description": "Product Purchased"
     });
   }
+
+  static Future<bool> chargeError(String uid) async {
+    DocumentSnapshot dataChargeShot =
+        await Firestore.instance.collection("cards").document(uid).get();
+    String chargeID = dataChargeShot.data["currentCharge"];
+    DocumentSnapshot dataChargeDetails =
+        await Firestore.instance.collection("cards").document(uid).collection("charges").document(chargeID).get();
+    return dataChargeDetails.data.containsKey("error");
+  }
 }
