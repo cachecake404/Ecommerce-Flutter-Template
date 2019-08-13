@@ -14,6 +14,16 @@ class ShopCard extends StatelessWidget {
   final String imageUrl; // Image to render for the Product
   final double price; // Price for the Product
 
+  Map<String, dynamic> getJson() {
+    return {
+      "name": name,
+      "shortDescription": shortDescription,
+      "longDescription": longDescription,
+      "imageUrl": imageUrl,
+      "price": price
+    };
+  }
+
   ShopCard(String n, String sd, String ld, String url, double p)
       : this.name = n,
         this.shortDescription = sd,
@@ -29,8 +39,8 @@ class ShopCard extends StatelessWidget {
     return Card(
       color: cardBackground,
       child: Container(
-        height: height*0.36,
-        width: width*0.74,
+        height: height * 0.36,
+        width: width * 0.74,
         child: Column(
           children: <Widget>[
             Container(
@@ -61,14 +71,13 @@ class ShopCard extends StatelessWidget {
                 Spacer(),
                 Text(
                   shortDescription,
-                  style:
-                      TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w400),
                 ),
                 Spacer(),
                 RaisedButton(
                   color: viewButtonColor,
-                  child: Text("View",style: TextStyle(
-                          color: Colors.white)),
+                  child: Text("View", style: TextStyle(color: Colors.white)),
                   onPressed: () {
                     Navigator.push(
                       context,

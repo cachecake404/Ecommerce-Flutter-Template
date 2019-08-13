@@ -8,6 +8,8 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import "../Tools/StripeManager.dart";
 import 'package:stripe_payment/stripe_payment.dart';
+import "./PostCart/Finished.dart";
+import "./PostCart/Fail.dart";
 
 class Cart extends StatefulWidget {
   Cart({Key key}) : super(key: key);
@@ -32,6 +34,14 @@ class _CartState extends State<Cart> {
   double itemPriceTotal;
   double taxRate;
   String checkOutText = "Checkout";
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   // Widget to Store Delivery Time
   DateTime deliveryTime = DateTime.now();
   void renderPrice(BuildContext context) {
@@ -76,8 +86,34 @@ class _CartState extends State<Cart> {
     if ((!errorCharge) &&
         (newTemp.data["currentChargeStatus"].toString() == "Good")) {
       print("GO TO CONFIRMATION SCREEN");
+      List<Map<String, dynamic>> itemJson = new List<Map<String, dynamic>>();
+      for (var i in Provider.of<DataTracker>(context).shopItems.toList()) {
+        itemJson.add(i.getJson());
+      }
+      Firestore.instance
+          .collection("cards")
+          .document(user.uid)
+          .collection("orders")
+          .document(newTemp.data["currentCharge"])
+          .setData({
+        "date": DateTime.now().toString(),
+        "items": itemJson,
+        "price": totalPrice
+      });
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Finished(
+              (newTemp.data["currentCharge"]),
+            ),
+          ));
     } else {
-      print("NO SOMETHING WENT WRONG");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Fail(),
+        ),
+      );
     }
     Provider.of<DataTracker>(context).isLoading = false;
   }
@@ -106,10 +142,8 @@ class _CartState extends State<Cart> {
           ),
         );
       });
-    }
-    else if(custID== "ERROR")
-    {
-       setState(() {
+    } else if (custID == "ERROR") {
+      setState(() {
         cardContainer = GestureDetector(
           onTap: () {
             manageEditCard(context);
@@ -127,8 +161,7 @@ class _CartState extends State<Cart> {
           ),
         );
       });
-    }
-     else {
+    } else {
       DocumentSnapshot dataVal = await Firestore.instance
           .collection("cards")
           .document(user.uid)

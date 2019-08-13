@@ -52,6 +52,7 @@ class _SplashState extends State<Splash> {
       //Uncomment lower portion to actually post new data.
       //manager.postObject(endpoint, data);
       Provider.of<DataTracker>(context).setCards();
+      Provider.of<DataTracker>(context).setOrderData();
       firstLoad = false;
     }
   }

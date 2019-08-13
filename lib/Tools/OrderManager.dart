@@ -6,6 +6,13 @@ class ShopItem
   ShopCard cardItem;
   int quantity;
   double price;
+  Map<String,dynamic> getJson()
+  {
+    Map<String,dynamic> dataVal = new Map<String,dynamic>();
+    dataVal.addAll({"quantity":quantity});
+    dataVal.addAll(cardItem.getJson());
+    return dataVal;
+  }
 }
 
 class OrderManager {

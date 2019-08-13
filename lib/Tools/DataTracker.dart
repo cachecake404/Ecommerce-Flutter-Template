@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/foundation.dart";
 import "../Tools/UserDataManager.dart";
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,8 +33,7 @@ class DataTracker with ChangeNotifier {
     ProductsHandler handler = new ProductsHandler();
     int n = 3; //number of types of products in data base
     for (int i = 1; i < n + 1; i++) {
-      List<ShopCard> cards =
-          await handler.getObject("type" + i.toString());
+      List<ShopCard> cards = await handler.getObject("type" + i.toString());
 
       _allCards.add(cards);
     }
@@ -42,6 +42,21 @@ class DataTracker with ChangeNotifier {
   // Track Orders
   List<ShopItem> _shopItems = new List<ShopItem>();
   List<ShopItem> get shopItems => _shopItems;
+  // Track Online Ordered Items
+  List<Map<String, dynamic>> _orderItems = new List<Map<String, dynamic>>();
+  List<Map<String, dynamic>> get orderItems => _orderItems;
+
+  void setOrderData() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    QuerySnapshot dataTemp = await Firestore.instance
+        .collection("cards")
+        .document(user.uid)
+        .collection("orders")
+        .limit(100)
+        .getDocuments();
+    dataTemp.documents.forEach((f) => _orderItems.add(f.data));
+  }
+
   // Tracking customer data
   Map<String, dynamic> _customData;
   Map<String, dynamic> get customData => _customData;
