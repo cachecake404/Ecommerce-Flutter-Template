@@ -44,6 +44,11 @@ class _CartState extends State<Cart> {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     DocumentSnapshot dataTemp =
         await Firestore.instance.collection("cards").document(user.uid).get();
+    dataTemp.data["currentChargeStatus"] = "Process";
+    await Firestore.instance
+        .collection("cards")
+        .document(user.uid)
+        .setData(dataTemp.data);
     String custID = dataTemp.data["custId"];
     if (custID == "new") {
       StripeSource.setPublishableKey(
@@ -55,16 +60,25 @@ class _CartState extends State<Cart> {
         });
       });
       Provider.of<DataTracker>(context).isLoading = true;
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 8));
       await genCardUI(context);
     }
 
     double totalPrice = (itemPriceTotal + taxRate);
     Provider.of<DataTracker>(context).isLoading = true;
     StripeManager.chargeCustomer(user.uid, custID, totalPrice);
-    await Future.delayed(const Duration(seconds: 5));    
+    await Future.delayed(const Duration(seconds: 8));
+    DocumentSnapshot newTemp =
+        await Firestore.instance.collection("cards").document(user.uid).get();
     bool errorCharge = await StripeManager.chargeError(user.uid);
     print(errorCharge);
+    print(newTemp.data["currentChargeStatus"].toString());
+    if ((!errorCharge) &&
+        (newTemp.data["currentChargeStatus"].toString() == "Good")) {
+      print("GO TO CONFIRMATION SCREEN");
+    } else {
+      print("NO SOMETHING WENT WRONG");
+    }
     Provider.of<DataTracker>(context).isLoading = false;
   }
 
@@ -77,17 +91,44 @@ class _CartState extends State<Cart> {
     String finger = dataTemp.data["currentFinger"];
     if (custID == "new") {
       setState(() {
-        cardContainer = Card(
-          child: Row(
-            children: <Widget>[
-              Icon(Icons.credit_card),
-              Spacer(),
-              Icon(Icons.add)
-            ],
+        cardContainer = GestureDetector(
+          onTap: () {
+            manageEditCard(context);
+          },
+          child: Card(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.credit_card),
+                Spacer(),
+                Icon(Icons.add)
+              ],
+            ),
           ),
         );
       });
-    } else {
+    }
+    else if(custID== "ERROR")
+    {
+       setState(() {
+        cardContainer = GestureDetector(
+          onTap: () {
+            manageEditCard(context);
+          },
+          child: Card(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.credit_card),
+                Spacer(),
+                Text("INVALID CARD"),
+                Spacer(),
+                Icon(Icons.add)
+              ],
+            ),
+          ),
+        );
+      });
+    }
+     else {
       DocumentSnapshot dataVal = await Firestore.instance
           .collection("cards")
           .document(user.uid)
@@ -126,7 +167,7 @@ class _CartState extends State<Cart> {
       StripeManager.addCard(user.uid, token);
     });
     Provider.of<DataTracker>(context).isLoading = true;
-    await Future.delayed(const Duration(seconds: 4));
+    await Future.delayed(const Duration(seconds: 8));
     await genCardUI(context);
     Provider.of<DataTracker>(context).isLoading = false;
   }

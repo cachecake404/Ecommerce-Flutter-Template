@@ -12,43 +12,53 @@ const stripe = require("stripe")(functions.config().stripe.token);
 exports.addPaymentCourse = functions.firestore
   .document("cards/{userId}/tokens/{tokenId}")
   .onWrite(async (change, context) => {
-    const data = change.after.data();
-    if (data === null) {
-      return null;
-    }
-    const token = data["tokenID"];
-    const snapshot = await firestore
-      .collection("cards")
-      .doc(context.params.userId)
-      .get();
-    const dataSnap = snapshot.data();
-    const emailID = dataSnap["email"];
-    const custID = dataSnap["custId"];
-    var customer;
-    if (custID === "new") {
-      customer = await stripe.customers.create({
-        email: emailID,
-        source: token
-      });
-
+    try{
+      const data = change.after.data();
+      if (data === null) {
+        return null;
+      }
+      const token = data["tokenID"];
+      const snapshot = await firestore
+        .collection("cards")
+        .doc(context.params.userId)
+        .get();
+      const dataSnap = snapshot.data();
+      const emailID = dataSnap["email"];
+      const custID = dataSnap["custId"];
+      var customer;
+      if (custID === "new") {
+        customer = await stripe.customers.create({
+          email: emailID,
+          source: token
+        });
+  
+        firestore
+          .collection("cards")
+          .doc(context.params.userId)
+          .update({ custId: customer.id });
+      } else {
+        customer = await stripe.customers.retrieve(custID);
+      }
+      const customerSource = customer.sources.data[0];
       firestore
         .collection("cards")
         .doc(context.params.userId)
-        .update({ custId: customer.id });
-    } else {
-      customer = await stripe.customers.retrieve(custID);
+        .set({ currentFinger: customerSource.card.fingerprint }, { merge: true });
+      return firestore
+        .collection("cards")
+        .doc(context.params.userId)
+        .collection("sources")
+        .doc(customerSource.card.fingerprint)
+        .set(customerSource, { merge: true });
     }
-    const customerSource = customer.sources.data[0];
-    firestore
+    catch(error){
+      firestore
       .collection("cards")
       .doc(context.params.userId)
-      .set({ currentFinger: customerSource.card.fingerprint }, { merge: true });
-    return firestore
-      .collection("cards")
-      .doc(context.params.userId)
-      .collection("sources")
-      .doc(customerSource.card.fingerprint)
-      .set(customerSource, { merge: true });
+      .update({ custId: "ERROR" });
+    }
+    return null;
+    
   });
 
 exports.createStripeCharge = functions.firestore
@@ -56,6 +66,11 @@ exports.createStripeCharge = functions.firestore
   .onCreate(async (change, context) => {
     try {
       //get the customer..to talk with Stripe...
+      await firestore
+      .collection("cards")
+      .doc(context.params.userId)
+      .set({ currentChargeStatus: "Process" }, { merge: true });
+      
       const snapshot = await firestore
         .collection("cards")
         .doc(context.params.userId)
@@ -81,10 +96,18 @@ exports.createStripeCharge = functions.firestore
       .collection("cards")
       .doc(context.params.userId)
       .set({ currentCharge: context.params.chargeId }, { merge: true });
+      await firestore
+      .collection("cards")
+      .doc(context.params.userId)
+      .set({ currentChargeStatus: "Good" }, { merge: true });
       return change.ref.set(response, { merge: true });
     } catch (error) {
       console.error(error);
       await change.ref.set({ error: "Error Occured" }, { merge: true });
+      await firestore
+      .collection("cards")
+      .doc(context.params.userId)
+      .set({ currentChargeStatus: "Bad" }, { merge: true });
       await firestore
         .collection("cards")
         .doc(context.params.userId)
