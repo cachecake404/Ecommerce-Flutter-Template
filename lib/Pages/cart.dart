@@ -85,12 +85,11 @@ class _CartState extends State<Cart> {
     print(newTemp.data["currentChargeStatus"].toString());
     if ((!errorCharge) &&
         (newTemp.data["currentChargeStatus"].toString() == "Good")) {
-      print("GO TO CONFIRMATION SCREEN");
       List<Map<String, dynamic>> itemJson = new List<Map<String, dynamic>>();
       for (var i in Provider.of<DataTracker>(context).shopItems.toList()) {
         itemJson.add(i.getJson());
       }
-      Firestore.instance
+      await Firestore.instance
           .collection("cards")
           .document(user.uid)
           .collection("orders")
@@ -100,6 +99,7 @@ class _CartState extends State<Cart> {
         "items": itemJson,
         "price": totalPrice
       });
+      Provider.of<DataTracker>(context).setOrderData();
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(

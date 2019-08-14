@@ -54,6 +54,7 @@ class DataTracker with ChangeNotifier {
         .collection("orders")
         .limit(100)
         .getDocuments();
+    _orderItems.clear();
     dataTemp.documents.forEach((f) => _orderItems.add(f.data));
   }
 
