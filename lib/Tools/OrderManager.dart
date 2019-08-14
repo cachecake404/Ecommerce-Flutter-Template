@@ -9,7 +9,7 @@ class ShopItem
   Map<String,dynamic> getJson()
   {
     Map<String,dynamic> dataVal = new Map<String,dynamic>();
-    dataVal.addAll({"quantity":quantity});
+    dataVal.addAll({"quantity":quantity,"Tprice":price});
     dataVal.addAll(cardItem.getJson());
     return dataVal;
   }

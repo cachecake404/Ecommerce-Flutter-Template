@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import "package:flutter/foundation.dart";
 import "../Tools/UserDataManager.dart";
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,10 +29,27 @@ class DataTracker with ChangeNotifier {
   //Track Products
   List<List<ShopCard>> _allCards = new List<List<ShopCard>>();
   List<List<ShopCard>> get allCards => _allCards;
+  
+  List<String> _titles = new List<String>();
+  List<String> get titles => _titles;
+
+  int _numTitles;
+  int get numTitles => _numTitles;
+
+  Future<List<String>> getTitles() async {
+    final DatabaseReference db = FirebaseDatabase.instance.reference();
+    DataSnapshot dataVal = await db.child("titles").once();
+    List<String> data = List<String>.from(dataVal.value);
+    return data;
+  }
 
   void setCards() async {
     ProductsHandler handler = new ProductsHandler();
-    int n = 3; //number of types of products in data base
+    int vnumber = await handler.getNumber();
+    List<String> titlesData = await getTitles();
+    _numTitles = vnumber;
+    _titles = titlesData;
+    int n = vnumber; //number of types of products in data base
     for (int i = 1; i < n + 1; i++) {
       List<ShopCard> cards = await handler.getObject("type" + i.toString());
 
@@ -42,6 +60,11 @@ class DataTracker with ChangeNotifier {
   // Track Orders
   List<ShopItem> _shopItems = new List<ShopItem>();
   List<ShopItem> get shopItems => _shopItems;
+  set shopItems(List<ShopItem> data) {
+    _shopItems = data;
+    notifyListeners();
+  }
+
   // Track Online Ordered Items
   List<Map<String, dynamic>> _orderItems = new List<Map<String, dynamic>>();
   List<Map<String, dynamic>> get orderItems => _orderItems;

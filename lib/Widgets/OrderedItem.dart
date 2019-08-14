@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hookah1/Tools/DataTracker.dart';
+import 'package:hookah1/Tools/OrderManager.dart';
+import 'package:hookah1/Widgets/ShopCard.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class OrderedItem extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -18,6 +22,23 @@ class OrderedItem extends StatelessWidget {
     return n;
   }
 
+  List<ShopItem> getShopItems()
+  {
+    List<ShopItem> finalItems = new List<ShopItem>();
+    for(var i in data["items"])
+    {
+      ShopCard cardItem = new ShopCard(i["name"],i["shortDescription"],i["longDescription"],i["imageUrl"],i["price"]);
+      ShopItem sItem = new ShopItem(cardItem,i["quantity"],i["Tprice"]);
+      finalItems.add(sItem);
+    }
+    return finalItems;
+  }
+  void setCart(BuildContext context)
+  {
+    Provider.of<DataTracker>(context).shopItems.clear();
+    Provider.of<DataTracker>(context).shopItems  = getShopItems();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -28,17 +49,12 @@ class OrderedItem extends StatelessWidget {
         Text(getDate()),
         Text("    "),
         Text(getPrice()),
-        Text("        "),
+        Text("                                "),
         RaisedButton(
-          onPressed: () {},
-          child: Text(
-            "View",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        Text("  "),
-        RaisedButton(
-          onPressed: () {},
+          onPressed: () {
+            setCart(context);
+            Navigator.pushNamed(context, "/cart");
+          },
           child: Text(
             "Reorder",
             style: TextStyle(color: Colors.white),

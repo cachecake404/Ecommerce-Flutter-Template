@@ -27,4 +27,12 @@ class ProductsHandler {
 
     return shopCards;
   }
+
+  Future<int> getNumber() async {
+    final DatabaseReference db = FirebaseDatabase.instance.reference();
+    DataSnapshot dataVal =
+        await db.child("TypesNumber").once();
+    return dataVal.value;
+  }
+
 }
