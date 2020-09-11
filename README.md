@@ -6,5 +6,5 @@ A basic application made using flutter that allows users to purchase or order a 
 ## Features Implemented
 
 1) Stripe used as backend for purchases
-2) Registration using facebook and google
+2) Registration using Facebook and Google sign in.
 3) Google maps to perform address searches.
